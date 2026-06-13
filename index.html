@@ -219,6 +219,39 @@
     .card-foot.fresh .dot { background: var(--tn-green); }
     .card-foot.stale .dot { background: var(--tn-yellow); }
 
+    /* ── METHODOLOGY ── */
+    .methodology {
+      margin-top: 44px; border-top: 1px solid var(--tn-border); padding-top: 36px;
+    }
+    .methodology > h3 {
+      font-size: 12px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 2px; color: var(--tn-cyan); margin-bottom: 6px;
+    }
+    .methodology > p.lead { font-size: 12px; color: var(--tn-comment); line-height: 1.8; margin-bottom: 22px; max-width: 760px; }
+    .methodology > p.lead code { color: var(--tn-fg-bright); }
+
+    .factors { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+    .factor {
+      background: var(--tn-bg-hi); border: 1px solid var(--tn-border);
+      border-left: 3px solid var(--tn-blue); border-radius: 5px; padding: 13px 16px;
+    }
+    .factor h4 { font-size: 12px; font-weight: 700; color: var(--tn-fg-bright); margin-bottom: 5px; display: flex; align-items: center; gap: 7px; }
+    .factor h4 .fnum { font-size: 9.5px; color: var(--tn-blue); border: 1px solid var(--tn-border); border-radius: 2px; padding: 0 5px; }
+    .factor p { font-size: 11px; color: var(--tn-comment); line-height: 1.7; }
+
+    .bands { display: flex; gap: 10px; flex-wrap: wrap; }
+    .band {
+      flex: 1 1 180px; display: flex; align-items: center; gap: 11px;
+      padding: 11px 15px; border-radius: 5px; border: 1px solid var(--tn-border);
+      background: var(--tn-bg-hi);
+    }
+    .band .range { font-size: 16px; font-weight: 700; min-width: 56px; }
+    .band .blabel { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+    .band .bdesc { font-size: 10.5px; color: var(--tn-comment); margin-top: 2px; }
+    .band.g { border-left: 3px solid var(--tn-green);  } .band.g .range, .band.g .blabel { color: var(--tn-green); }
+    .band.y { border-left: 3px solid var(--tn-yellow); } .band.y .range, .band.y .blabel { color: var(--tn-yellow); }
+    .band.r { border-left: 3px solid var(--tn-red);    } .band.r .range, .band.r .blabel { color: var(--tn-red); }
+
     /* ── BOTTOM ── */
     .bottom {
       display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
@@ -257,6 +290,7 @@
       .columns { grid-template-columns: 1fr; gap: 8px 0; }
       .divider { display: none; }
       .bottom  { grid-template-columns: 1fr; }
+      .factors { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -333,6 +367,54 @@
     </div>
 
   </div>
+
+  <section class="methodology">
+    <h3>▚ How the scores work</h3>
+    <p class="lead">
+      Scores are an <strong>opinionated synthesis</strong>, not a precise metric — they rank how much
+      real privacy a protocol delivers <em>in practice</em>, not just on paper. A perfect cipher with
+      nobody using it scores lower than solid cryptography that everyone uses by default. Each protocol
+      is weighed on the five factors below, then mapped to a <code>0–10</code> grade.
+    </p>
+
+    <div class="factors">
+      <div class="factor">
+        <h4><span class="fnum">01</span> Default vs opt-in</h4>
+        <p>Privacy that's always on beats privacy you have to choose. Opt-in models leak metadata and shrink the crowd you hide in. This is the single biggest factor.</p>
+      </div>
+      <div class="factor">
+        <h4><span class="fnum">02</span> Anonymity set</h4>
+        <p>How large is the crowd you blend into? More private transactions sharing the same pool means stronger deniability for each one.</p>
+      </div>
+      <div class="factor">
+        <h4><span class="fnum">03</span> Cryptographic strength</h4>
+        <p>The underlying tech — ring signatures, zk-SNARKs, MimbleWimble, CoinJoin — and how well it resists chain analysis and known attacks.</p>
+      </div>
+      <div class="factor">
+        <h4><span class="fnum">04</span> Real adoption</h4>
+        <p>What share of transactions are actually private? Strong crypto with low shielded-pool usage delivers weak real-world privacy.</p>
+      </div>
+      <div class="factor">
+        <h4><span class="fnum">05</span> Maturity &amp; standing</h4>
+        <p>Years battle-tested, audits, and operational health. Sanctions, arrests, or a disrupted service drag usability and effective privacy down.</p>
+      </div>
+    </div>
+
+    <div class="bands">
+      <div class="band g">
+        <span class="range">8–10</span>
+        <div><div class="blabel">High</div><div class="bdesc">Strong crypto + a large, real anonymity set.</div></div>
+      </div>
+      <div class="band y">
+        <span class="range">6–7</span>
+        <div><div class="blabel">Medium</div><div class="bdesc">Sound approach held back by scale, adoption, or UX.</div></div>
+      </div>
+      <div class="band r">
+        <span class="range">4–5</span>
+        <div><div class="blabel">Low</div><div class="bdesc">Weak guarantees, tiny pools, or legal/operational risk.</div></div>
+      </div>
+    </div>
+  </section>
 
   <div class="bottom">
     <div class="panel panel-verdict">
