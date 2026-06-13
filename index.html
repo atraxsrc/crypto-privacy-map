@@ -117,6 +117,30 @@
     .section-header.right h2 { color: var(--tn-yellow); }
     .section-header .desc { font-size: 11px; color: var(--tn-comment); margin-top: 4px; }
 
+    /* ── CONTROLS ── */
+    .controls {
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+    .controls input[type="search"] {
+      flex: 1 1 220px; min-width: 0;
+      background: var(--tn-bg-hi); border: 1px solid var(--tn-border);
+      color: var(--tn-fg-bright); font-family: var(--font); font-size: 12px;
+      padding: 8px 12px; border-radius: 4px; outline: none;
+      transition: border-color .15s;
+    }
+    .controls input[type="search"]:focus { border-color: var(--tn-blue); }
+    .controls input[type="search"]::placeholder { color: var(--tn-comment); }
+    .controls .sort-group { display: flex; align-items: center; gap: 7px; }
+    .controls label { font-size: 10.5px; color: var(--tn-comment); }
+    .controls select {
+      background: var(--tn-bg-hi); border: 1px solid var(--tn-border);
+      color: var(--tn-fg-bright); font-family: var(--font); font-size: 11.5px;
+      padding: 7px 10px; border-radius: 4px; outline: none; cursor: pointer;
+    }
+    .controls select:focus { border-color: var(--tn-blue); }
+    .no-results { font-size: 11.5px; color: var(--tn-comment); padding: 8px 0; }
+
     /* ── CARDS ── */
     .card {
       background: var(--tn-bg-hi);
@@ -187,6 +211,13 @@
     .tag-warn { background: rgba(247,118,142,.1); color: var(--tn-red);    border: 1px solid rgba(247,118,142,.25); }
     .tag-ok   { background: rgba(125,207,255,.1); color: var(--tn-cyan);   border: 1px solid rgba(125,207,255,.2);  }
     .tag-info { background: rgba(187,154,247,.1); color: var(--tn-purple); border: 1px solid rgba(187,154,247,.2);  }
+    .tag-stale { background: rgba(86,95,137,.12); color: var(--tn-comment); border: 1px solid rgba(86,95,137,.4); }
+
+    .card.stale { border-style: dashed; }
+    .card-foot { display: flex; align-items: center; gap: 6px; margin-top: 9px; font-size: 9.5px; color: var(--tn-comment); }
+    .card-foot .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--tn-comment); flex-shrink: 0; }
+    .card-foot.fresh .dot { background: var(--tn-green); }
+    .card-foot.stale .dot { background: var(--tn-yellow); }
 
     /* ── BOTTOM ── */
     .bottom {
@@ -214,6 +245,7 @@
     footer .sep { color: var(--tn-border); }
     footer a { color: var(--tn-blue); text-decoration: none; }
     footer a:hover { text-decoration: underline; }
+    footer .updated { color: var(--tn-green); }
 
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(14px); }
@@ -260,6 +292,20 @@
     </div>
   </div>
 
+  <div class="controls">
+    <input type="search" id="search" placeholder="// filter protocols, tech, or tags…" aria-label="Filter protocols" />
+    <div class="sort-group">
+      <label for="sort">// sort:</label>
+      <select id="sort" aria-label="Sort protocols">
+        <option value="default">Curated order</option>
+        <option value="score-desc">Score (high → low)</option>
+        <option value="score-asc">Score (low → high)</option>
+        <option value="reviewed">Review due first</option>
+        <option value="name">Name (A → Z)</option>
+      </select>
+    </div>
+  </div>
+
   <div class="columns">
 
     <!-- LEFT -->
@@ -269,75 +315,8 @@
         <h2>🔒 Always-On Privacy</h2>
         <p class="desc">Every transaction is private. No user action needed.</p>
       </div>
-
-      <div class="card grade-high">
-        <div class="card-top">
-          <div class="card-left">
-            <a class="card-name" href="https://www.getmonero.org" target="_blank" rel="noopener">Monero (XMR)</a>
-            <span class="card-tech">Ring signatures · Stealth addresses · RingCT</span>
-          </div>
-          <div class="score-pill"><span class="score-num">10/10</span><span class="score-grade">High</span></div>
-        </div>
-        <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
-        <ul class="card-body">
-          <li>Largest anonymity set. Gold standard of privacy.</li>
-          <li>Delisted from many exchanges — proves it works.</li>
-          <li>Every TX private by default, no opt-in required.</li>
-        </ul>
-        <div class="tags">
-          <span class="tag tag-ok">Battle-Tested</span>
-          <span class="tag tag-ok">Gold Standard</span>
-        </div>
-      </div>
-
-      <div class="card grade-mid">
-        <div class="card-top">
-          <div class="card-left">
-            <a class="card-name" href="https://zano.org" target="_blank" rel="noopener">Zano (ZANO)</a>
-            <span class="card-tech">Ring signatures · Confidential assets</span>
-          </div>
-          <div class="score-pill"><span class="score-num">7/10</span><span class="score-grade">Medium</span></div>
-        </div>
-        <div class="bar-track"><div class="bar-fill" style="width:70%"></div></div>
-        <ul class="card-body">
-          <li>Confidential assets with ring signatures.</li>
-          <li>Supports private smart contracts.</li>
-          <li>Growing but still small anonymity set.</li>
-        </ul>
-        <div class="tags"><span class="tag tag-info">Smart Contracts</span></div>
-      </div>
-
-      <div class="card grade-mid">
-        <div class="card-top">
-          <div class="card-left">
-            <a class="card-name" href="https://www.beldex.io" target="_blank" rel="noopener">Beldex (BDX)</a>
-            <span class="card-tech">Monero fork · RingCT</span>
-          </div>
-          <div class="score-pill"><span class="score-num">6/10</span><span class="score-grade">Medium</span></div>
-        </div>
-        <div class="bar-track"><div class="bar-fill" style="width:60%"></div></div>
-        <ul class="card-body">
-          <li>Monero fork with similar tech stack.</li>
-          <li>Smaller network = weaker anonymity guarantees.</li>
-          <li>Less battle-tested than Monero.</li>
-        </ul>
-      </div>
-
-      <div class="card grade-mid">
-        <div class="card-top">
-          <div class="card-left">
-            <a class="card-name" href="https://www.mwc.mw" target="_blank" rel="noopener">MWC (MWC)</a>
-            <span class="card-tech">MimbleWimble · No addresses on-chain</span>
-          </div>
-          <div class="score-pill"><span class="score-num">6/10</span><span class="score-grade">Medium</span></div>
-        </div>
-        <div class="bar-track"><div class="bar-fill" style="width:60%"></div></div>
-        <ul class="card-body">
-          <li>MimbleWimble: no addresses stored on-chain.</li>
-          <li>Interactive transactions are a UX barrier.</li>
-          <li>Very small network limits effective privacy.</li>
-        </ul>
-      </div>
+      <div id="col-default"></div>
+      <p class="no-results" id="empty-default" hidden>// no matches</p>
     </div>
 
     <div class="divider"></div>
@@ -349,119 +328,8 @@
         <h2>⚠️ Choose-Your-Privacy</h2>
         <p class="desc">User must choose privacy. Most transactions stay public.</p>
       </div>
-
-      <div class="card grade-high">
-        <div class="card-top">
-          <div class="card-left">
-            <a class="card-name" href="https://z.cash" target="_blank" rel="noopener">Zcash Shielded (ZEC)</a>
-            <span class="card-tech">zk-SNARKs · Sapling / Orchard pools</span>
-          </div>
-          <div class="score-pill"><span class="score-num">8/10</span><span class="score-grade">High</span></div>
-        </div>
-        <div class="bar-track"><div class="bar-fill" style="width:80%"></div></div>
-        <ul class="card-body">
-          <li>zk-SNARKs are very strong cryptography.</li>
-          <li>But &lt;10% of TXs use the shielded pool.</li>
-          <li>Small shielded set weakens anonymity.</li>
-        </ul>
-        <div class="tags">
-          <span class="tag tag-warn">Low Adoption</span>
-          <span class="tag tag-ok">Strong Crypto</span>
-        </div>
-      </div>
-
-      <div class="card grade-mid">
-        <div class="card-top">
-          <div class="card-left">
-            <a class="card-name" href="https://railgun.org" target="_blank" rel="noopener">Railgun (ETH)</a>
-            <span class="card-tech">zk-SNARKs · DeFi privacy layer</span>
-          </div>
-          <div class="score-pill"><span class="score-num">7/10</span><span class="score-grade">Medium</span></div>
-        </div>
-        <div class="bar-track"><div class="bar-fill" style="width:70%"></div></div>
-        <ul class="card-body">
-          <li>zk-SNARKs for DeFi privacy.</li>
-          <li>Supports private swaps and transfers.</li>
-          <li>Compliance features available.</li>
-        </ul>
-        <div class="tags">
-          <span class="tag tag-info">DeFi Native</span>
-          <span class="tag tag-ok">Compliance Ready</span>
-        </div>
-      </div>
-
-      <div class="card grade-mid">
-        <div class="card-top">
-          <div class="card-left">
-            <a class="card-name" href="https://tornado.ws" target="_blank" rel="noopener">Tornado Cash (ETH)</a>
-            <span class="card-tech">zk-SNARK mixer · ETH / ERC-20</span>
-          </div>
-          <div class="score-pill"><span class="score-num">7/10</span><span class="score-grade">Medium</span></div>
-        </div>
-        <div class="bar-track"><div class="bar-fill" style="width:70%"></div></div>
-        <ul class="card-body">
-          <li>zk-SNARK mixer for ETH/tokens.</li>
-          <li>Sanctioned by OFAC — significant legal risk.</li>
-          <li>Developer (Roman Storm) on trial.</li>
-        </ul>
-        <div class="tags">
-          <span class="tag tag-warn">OFAC Sanctioned</span>
-          <span class="tag tag-warn">Legal Risk</span>
-        </div>
-      </div>
-
-      <div class="card grade-low">
-        <div class="card-top">
-          <div class="card-left">
-            <a class="card-name" href="https://samouraiwallet.com" target="_blank" rel="noopener">Samourai Whirlpool (BTC)</a>
-            <span class="card-tech">CoinJoin · Equal-output mixing</span>
-          </div>
-          <div class="score-pill"><span class="score-num">5/10</span><span class="score-grade">Low</span></div>
-        </div>
-        <div class="bar-track"><div class="bar-fill" style="width:50%"></div></div>
-        <ul class="card-body">
-          <li>CoinJoin equal-output mixing.</li>
-          <li>Founders arrested April 2024.</li>
-          <li>Service disrupted, uncertain future.</li>
-        </ul>
-        <div class="tags">
-          <span class="tag tag-warn">Founders Arrested</span>
-          <span class="tag tag-warn">Disrupted</span>
-        </div>
-      </div>
-
-      <div class="card grade-low">
-        <div class="card-top">
-          <div class="card-left">
-            <a class="card-name" href="https://decred.org" target="_blank" rel="noopener">Decred CSPP (DCR)</a>
-            <span class="card-tech">CoinShuffle++ · StakeShuffle</span>
-          </div>
-          <div class="score-pill"><span class="score-num">5/10</span><span class="score-grade">Low</span></div>
-        </div>
-        <div class="bar-track"><div class="bar-fill" style="width:50%"></div></div>
-        <ul class="card-body">
-          <li>CoinShuffle++ protocol.</li>
-          <li>Small mixing pool limits effectiveness.</li>
-          <li>Low adoption weakens anonymity set.</li>
-        </ul>
-      </div>
-
-      <div class="card grade-low">
-        <div class="card-top">
-          <div class="card-left">
-            <a class="card-name" href="https://www.dash.org" target="_blank" rel="noopener">Dash PrivateSend (DASH)</a>
-            <span class="card-tech">CoinJoin variant · Masternode mixing</span>
-          </div>
-          <div class="score-pill"><span class="score-num">4/10</span><span class="score-grade">Low</span></div>
-        </div>
-        <div class="bar-track"><div class="bar-fill" style="width:40%"></div></div>
-        <ul class="card-body">
-          <li>Basic CoinJoin variant.</li>
-          <li>Masternode model raises concerns.</li>
-          <li>Very low privacy adoption rate.</li>
-        </ul>
-        <div class="tags"><span class="tag tag-warn">Very Low Adoption</span></div>
-      </div>
+      <div id="col-optin"></div>
+      <p class="no-results" id="empty-optin" hidden>// no matches</p>
     </div>
 
   </div>
@@ -488,10 +356,222 @@
   <footer>
     <span>// @atraxsrc</span>
     <span class="sep">|</span>
+    <span>Last reviewed: <span class="updated" id="last-reviewed"></span></span>
+    <span class="sep">|</span>
+    <span id="stale-summary"></span>
     <span class="sep">|</span>
     <span>Not financial advice</span>
   </footer>
 
 </div>
+
+<script>
+  /* ──────────────────────────────────────────────────────────────
+   *  SINGLE SOURCE OF TRUTH
+   *  To update the map, edit DATA below. Everything renders from it.
+   *  - score (0–10) drives the grade colour & bar automatically
+   *      8–10 → high (green) · 6–7 → medium (yellow) · 4–5 → low (red)
+   *  - column: "default" (private by default) or "optin"
+   *  - tags[].type: "ok" | "warn" | "info"
+   *  Bump LAST_REVIEWED whenever you verify/refresh the data.
+   * ────────────────────────────────────────────────────────────── */
+  const LAST_REVIEWED = "2026-06-13";
+  const STALE_AFTER_DAYS = 180; // a card unreviewed for this long is flagged "review due"
+
+  const DATA = [
+    {
+      column: "default", name: "Monero", ticker: "XMR", url: "https://www.getmonero.org",
+      reviewed: "2026-06-13",
+      tech: "Ring signatures · Stealth addresses · RingCT", score: 10,
+      body: [
+        "Largest anonymity set. Gold standard of privacy.",
+        "Delisted from many exchanges — proves it works.",
+        "Every TX private by default, no opt-in required."
+      ],
+      tags: [{ type: "ok", label: "Battle-Tested" }, { type: "ok", label: "Gold Standard" }]
+    },
+    {
+      column: "default", name: "Zano", ticker: "ZANO", url: "https://zano.org",
+      reviewed: "2026-06-13",
+      tech: "Ring signatures · Confidential assets", score: 7,
+      body: [
+        "Confidential assets with ring signatures.",
+        "Supports private smart contracts.",
+        "Growing but still small anonymity set."
+      ],
+      tags: [{ type: "info", label: "Smart Contracts" }]
+    },
+    {
+      column: "default", name: "Beldex", ticker: "BDX", url: "https://www.beldex.io",
+      reviewed: "2025-09-01",
+      tech: "Monero fork · RingCT", score: 6,
+      body: [
+        "Monero fork with similar tech stack.",
+        "Smaller network = weaker anonymity guarantees.",
+        "Less battle-tested than Monero."
+      ],
+      tags: []
+    },
+    {
+      column: "default", name: "MWC", ticker: "MWC", url: "https://www.mwc.mw",
+      reviewed: "2025-04-10",
+      tech: "MimbleWimble · No addresses on-chain", score: 6,
+      body: [
+        "MimbleWimble: no addresses stored on-chain.",
+        "Interactive transactions are a UX barrier.",
+        "Very small network limits effective privacy."
+      ],
+      tags: []
+    },
+    {
+      column: "optin", name: "Zcash Shielded", ticker: "ZEC", url: "https://z.cash",
+      reviewed: "2026-06-13",
+      tech: "zk-SNARKs · Sapling / Orchard pools", score: 8,
+      body: [
+        "zk-SNARKs are very strong cryptography.",
+        "But a minority of TXs use the shielded pool.",
+        "Smaller shielded set weakens anonymity."
+      ],
+      tags: [{ type: "warn", label: "Opt-In Adoption" }, { type: "ok", label: "Strong Crypto" }]
+    },
+    {
+      column: "optin", name: "Railgun", ticker: "ETH", url: "https://railgun.org",
+      reviewed: "2026-01-15",
+      tech: "zk-SNARKs · DeFi privacy layer", score: 7,
+      body: [
+        "zk-SNARKs for DeFi privacy.",
+        "Supports private swaps and transfers.",
+        "Compliance features available."
+      ],
+      tags: [{ type: "info", label: "DeFi Native" }, { type: "ok", label: "Compliance Ready" }]
+    },
+    {
+      column: "optin", name: "Tornado Cash", ticker: "ETH", url: "https://tornado.ws",
+      reviewed: "2026-06-13",
+      tech: "zk-SNARK mixer · ETH / ERC-20", score: 7,
+      body: [
+        "zk-SNARK mixer for ETH/tokens.",
+        "OFAC sanctions delisted in 2025 — status evolving.",
+        "Developer Roman Storm case set legal precedent."
+      ],
+      tags: [{ type: "warn", label: "Legal Risk" }]
+    },
+    {
+      column: "optin", name: "Samourai Whirlpool", ticker: "BTC", url: "https://samouraiwallet.com",
+      reviewed: "2025-08-01",
+      tech: "CoinJoin · Equal-output mixing", score: 5,
+      body: [
+        "CoinJoin equal-output mixing.",
+        "Founders arrested April 2024.",
+        "Service disrupted, uncertain future."
+      ],
+      tags: [{ type: "warn", label: "Founders Arrested" }, { type: "warn", label: "Disrupted" }]
+    },
+    {
+      column: "optin", name: "Decred CSPP", ticker: "DCR", url: "https://decred.org",
+      reviewed: "2025-05-01",
+      tech: "CoinShuffle++ · StakeShuffle", score: 5,
+      body: [
+        "CoinShuffle++ protocol.",
+        "Small mixing pool limits effectiveness.",
+        "Low adoption weakens anonymity set."
+      ],
+      tags: []
+    },
+    {
+      column: "optin", name: "Dash PrivateSend", ticker: "DASH", url: "https://www.dash.org",
+      reviewed: "2025-03-01",
+      tech: "CoinJoin variant · Masternode mixing", score: 4,
+      body: [
+        "Basic CoinJoin variant.",
+        "Masternode model raises concerns.",
+        "Very low privacy adoption rate."
+      ],
+      tags: [{ type: "warn", label: "Very Low Adoption" }]
+    }
+  ];
+
+  /* ── derive grade + label from score ── */
+  function gradeOf(score) {
+    if (score >= 8) return { cls: "grade-high", label: "High" };
+    if (score >= 6) return { cls: "grade-mid", label: "Medium" };
+    return { cls: "grade-low", label: "Low" };
+  }
+
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+  const DAY_MS = 86400000;
+  function daysSince(dateStr) {
+    if (!dateStr) return Infinity;
+    return Math.floor((Date.now() - new Date(dateStr + "T00:00:00Z").getTime()) / DAY_MS);
+  }
+  function isStale(p) { return daysSince(p.reviewed) > STALE_AFTER_DAYS; }
+
+  function cardHTML(p) {
+    const g = gradeOf(p.score);
+    const stale = isStale(p);
+    const bullets = p.body.map((b) => `<li>${esc(b)}</li>`).join("");
+    const tagList = (p.tags || []).slice();
+    if (stale) tagList.push({ type: "stale", label: "⟳ Review due" });
+    const tags = tagList.length
+      ? `<div class="tags">${tagList.map((t) =>
+          `<span class="tag tag-${esc(t.type)}">${esc(t.label)}</span>`).join("")}</div>`
+      : "";
+    const reviewed = p.reviewed
+      ? `<div class="card-foot ${stale ? "stale" : "fresh"}"><span class="dot"></span>reviewed ${esc(p.reviewed)}</div>`
+      : "";
+    return `
+      <div class="card ${g.cls}${stale ? " stale" : ""}">
+        <div class="card-top">
+          <div class="card-left">
+            <a class="card-name" href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.name)} (${esc(p.ticker)})</a>
+            <span class="card-tech">${esc(p.tech)}</span>
+          </div>
+          <div class="score-pill"><span class="score-num">${p.score}/10</span><span class="score-grade">${g.label}</span></div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:${p.score * 10}%"></div></div>
+        <ul class="card-body">${bullets}</ul>
+        ${tags}
+        ${reviewed}
+      </div>`;
+  }
+
+  function matches(p, q) {
+    if (!q) return true;
+    const hay = [p.name, p.ticker, p.tech, ...p.body, ...(p.tags || []).map((t) => t.label)]
+      .join(" ").toLowerCase();
+    return hay.includes(q);
+  }
+
+  function sortItems(items, mode) {
+    const arr = items.slice();
+    if (mode === "score-desc") arr.sort((a, b) => b.score - a.score);
+    else if (mode === "score-asc") arr.sort((a, b) => a.score - b.score);
+    else if (mode === "reviewed") arr.sort((a, b) => daysSince(b.reviewed) - daysSince(a.reviewed));
+    else if (mode === "name") arr.sort((a, b) => a.name.localeCompare(b.name));
+    return arr;
+  }
+
+  function render() {
+    const q = document.getElementById("search").value.trim().toLowerCase();
+    const mode = document.getElementById("sort").value;
+
+    [["default", "col-default", "empty-default"],
+     ["optin", "col-optin", "empty-optin"]].forEach(([col, listId, emptyId]) => {
+      const items = sortItems(DATA.filter((p) => p.column === col && matches(p, q)), mode);
+      document.getElementById(listId).innerHTML = items.map(cardHTML).join("");
+      document.getElementById(emptyId).hidden = items.length !== 0;
+    });
+  }
+
+  document.getElementById("last-reviewed").textContent = LAST_REVIEWED;
+  const staleCount = DATA.filter(isStale).length;
+  document.getElementById("stale-summary").textContent =
+    staleCount ? `${staleCount} of ${DATA.length} need review` : "All entries current";
+  document.getElementById("search").addEventListener("input", render);
+  document.getElementById("sort").addEventListener("change", render);
+  render();
+</script>
 </body>
 </html>
