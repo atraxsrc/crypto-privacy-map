@@ -1883,7 +1883,7 @@ The whole plan is done when all of these hold:
 ```bash
 python3 -m unittest discover -s scripts/tests -v   # all tests pass
 python3 scripts/fetch_metrics.py --dry-run          # valid document, exit 0
-grep -c "id:" index.html                            # 10 protocol ids
+grep -c 'id: "' index.html                         # 10 protocol ids
 ```
 
 - The Actions run for **metrics** is green and has committed a `metrics.json`.
