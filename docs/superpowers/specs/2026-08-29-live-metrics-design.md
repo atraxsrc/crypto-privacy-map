@@ -41,7 +41,8 @@ Explicitly out of scope, to keep the surface small:
   Metrics must be privacy-relevant or they do not ship.
 - **No score computation.** The 0-10 stays a hand-set editorial judgment, always.
 - **No client-side API calls.** The browser fetches one file from our own origin.
-- **No framework, bundler, or npm dependency.** Node's standard library only.
+- **No framework, bundler, or third-party package.** Python's standard library
+  only for the pipeline; no framework for the page.
 - **Not the editorial PR agent.** This design covers metrics. The README claim about
   an automated watch agent gets corrected to describe what actually exists.
 
@@ -65,9 +66,9 @@ only write surface is a new `metrics.json`.
  .github/workflows/metrics.yml     nightly cron + manual dispatch
             |
             v
- scripts/fetch-metrics.mjs         runner: isolate, retry, merge, write
+ scripts/fetch_metrics.py          runner: isolate, retry, merge, write
             |
-            +-- scripts/sources/*.mjs    one module per source
+            +-- scripts/sources/*.py     one module per source
             |
             v
  metrics.json                      bot-owned. Never hand-edited
@@ -136,7 +137,9 @@ Keys are stable protocol slugs. This requires a new `id` field on every `DATA` e
 
 - `ok` - fetched successfully this run.
 - `unsourced` - no keyless public source exists for this protocol. A permanent,
-  deliberate state, not a failure.
+  deliberate state, not a failure. Emitted from an explicit `UNSOURCED` list in the
+  source registry, each entry carrying a one-line reason, so "we looked and found
+  nothing" stays distinguishable from a typo'd id.
 - `error` - a source exists and the fetch failed. Transient. Carries `lastGood` when
   a previous run succeeded.
 
@@ -156,18 +159,22 @@ their real age. Degrading to older-but-labelled beats degrading to empty.
 
 ## Fetcher structure
 
-`scripts/fetch-metrics.mjs`, Node 20+, zero dependencies (global `fetch`,
-`node:test`, `node:fs`).
+`scripts/fetch_metrics.py`, Python 3.11+, standard library only (`urllib.request`,
+`json`, `concurrent.futures`, `unittest`). Chosen over Node because Python is the
+only runtime present on the development machine, so the fetcher and its tests run
+locally with no toolchain install; both are preinstalled on `ubuntu-latest`. The
+pipeline shares no code with the page, so the language split costs nothing: the only
+contract between them is `metrics.json`.
 
-Each source is a module in `scripts/sources/` exporting:
+Each source is a module in `scripts/sources/` exposing:
 
-```js
-export default {
-  id: "zcash-shielded",
-  sourceName: "Blockchair",
-  sourceUrl: "https://blockchair.com/zcash",
-  async fetch() { /* returns values[] or throws */ }
-};
+```python
+SOURCE = Source(
+    id="zcash-shielded",
+    source_name="Blockchair",
+    source_url="https://blockchair.com/zcash",
+    fetch=_fetch,          # () -> list[Value], or raises
+)
 ```
 
 The runner:
@@ -296,13 +303,15 @@ Two specific items flagged during discussion:
 - Triggers: nightly cron at 03:17 UTC (off the hour, to avoid the top-of-hour
   stampede against public endpoints) plus `workflow_dispatch`.
 - `permissions: contents: write`; a concurrency group prevents overlapping runs.
-- Node 20. No install step, since there are no dependencies.
+- Python 3 as preinstalled on the runner. No install step and no `setup-python`,
+  since there are no dependencies.
 - Runs the script; if `git diff --quiet` reports no change, skips the commit.
   Otherwise commits `chore(metrics): nightly refresh` and pushes.
 
 ## Testing
 
-The repo has no test framework. Use `node:test`, which is built in.
+The repo has no test framework. Use `unittest`, which is built in.
+Run with `python3 -m unittest discover -s scripts/tests`.
 
 Unit tests, all offline against fixtures:
 
@@ -312,6 +321,9 @@ Unit tests, all offline against fixtures:
 - A source that hangs is cut off by the timeout.
 - Relative-time formatting boundaries (under 48h, over 7 days).
 - The runner exits non-zero when more than half the sources fail, but still writes.
+- Registry coverage: the ids in `REGISTRY` plus `UNSOURCED` exactly equal the ids
+  parsed out of `index.html`, so roster drift is a test failure and adding a
+  protocol to the page forces an explicit sourced/unsourced decision.
 
 Source modules are tested against recorded fixture responses, never live network,
 so the suite is deterministic and runnable offline.
