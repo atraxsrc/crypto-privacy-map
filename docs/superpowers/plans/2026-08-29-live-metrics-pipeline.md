@@ -138,7 +138,10 @@ second list, so the two can never drift apart.
 import re
 from pathlib import Path
 
-ID_RE = re.compile(r'^\s*id:\s*"([a-z0-9-]+)"\s*,', re.MULTILINE)
+# Matches an id in either layout: on its own line, or inline after another
+# property. Anchoring to a preceding { or , keeps it from matching text that
+# merely looks like an id inside a card's prose.
+ID_RE = re.compile(r'[{,]\s*id:\s*"([a-z0-9-]+)"\s*,')
 
 
 def ids_from_index_html(path):
@@ -164,8 +167,8 @@ def ids_from_index_html(path):
 - [ ] **Step 4: Add an `id` to each DATA entry in `index.html`**
 
 In the `DATA` array (starts line 463), add an `id:` as the first property of every
-entry, on its own line so the parser's line-anchored regex matches. The ten ids,
-in the array's existing order:
+entry, on its own line. The parser accepts either layout, but its own line matches
+the surrounding style. The ten ids, in the array's existing order:
 
 ```
 Monero              -> id: "monero",
