@@ -41,7 +41,7 @@
   entry, matching the ten already there. Not two, not five.
 - **Run tests with:** `python3 -m unittest discover -s scripts/tests -v`
 - **Git note:** `~/.gitconfig` is unreadable in this environment. Prefix git commands
-  with `GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_SYSTEM=/dev/null GIT_AUTHOR_NAME=atraxsrc GIT_AUTHOR_EMAIL=0xdev1@umbrasec.dev GIT_COMMITTER_NAME=atraxsrc GIT_COMMITTER_EMAIL=0xdev1@umbrasec.dev`
+  with `GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_SYSTEM=/dev/null GIT_AUTHOR_NAME=atraxsrc GIT_AUTHOR_EMAIL=92285717+atraxsrc@users.noreply.github.com GIT_COMMITTER_NAME=atraxsrc GIT_COMMITTER_EMAIL=92285717+atraxsrc@users.noreply.github.com`
   or commits fail with "unknown error occurred while reading the configuration files".
 
 ## File Structure
