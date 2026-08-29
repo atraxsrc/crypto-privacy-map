@@ -18,7 +18,7 @@ jobs:
   refresh:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       # No setup-python and no install step: the runner ships a usable Python 3
       # and the pipeline has no dependencies.
