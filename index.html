@@ -219,6 +219,21 @@
     .card-foot.fresh .dot { background: var(--tn-green); }
     .card-foot.stale .dot { background: var(--tn-yellow); }
 
+    /* ── LIVE METRICS ──
+       Deliberately unlike .card-foot. Review freshness is a claim about human
+       judgment; metric freshness is a claim about a cron job. Sharing dots or
+       chips between them would imply a card was re-read when a bot merely
+       re-pinged an API. */
+    .metrics { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--tn-border); }
+    .metrics.aged { opacity: .5; }
+    .metric { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: 10.5px; line-height: 1.85; }
+    .metric-label { color: var(--tn-comment); }
+    .metric-value { color: var(--tn-fg-bright); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .metric-trend { font-size: 9px; margin-left: 5px; }
+    .metric-trend.up { color: var(--tn-green); }
+    .metric-trend.down { color: var(--tn-red); }
+    .metrics-age { margin-top: 6px; font-size: 9px; color: var(--tn-comment); opacity: .8; }
+
     /* ── METHODOLOGY ── */
     .methodology {
       margin-top: 44px; border-top: 1px solid var(--tn-border); padding-top: 36px;
@@ -414,6 +429,12 @@
         <div><div class="blabel">Low</div><div class="bdesc">Weak guarantees, tiny pools, or legal/operational risk.</div></div>
       </div>
     </div>
+    <p class="lead" style="margin-top:22px">
+      Live figures are measured nightly from public, key-free sources and are shown
+      only where such a source exists; many privacy protocols publish no usable
+      endpoint, so their cards carry no measured figures. Measured values never
+      change a score - scores stay hand-set.
+    </p>
   </section>
 
   <div class="bottom">
@@ -441,6 +462,8 @@
     <span>Last reviewed: <span class="updated" id="last-reviewed"></span></span>
     <span class="sep">|</span>
     <span id="stale-summary"></span>
+    <span class="sep" id="metrics-sep" hidden>|</span>
+    <span id="metrics-age" hidden></span>
     <span class="sep">|</span>
     <span>Not financial advice</span>
   </footer>
@@ -462,6 +485,7 @@
 
   const DATA = [
     {
+      id: "monero",
       column: "default", name: "Monero", ticker: "XMR", url: "https://www.getmonero.org",
       reviewed: "2026-06-13",
       tech: "Ring signatures · Stealth addresses · RingCT", score: 10,
@@ -473,6 +497,7 @@
       tags: [{ type: "ok", label: "Battle-Tested" }, { type: "ok", label: "Gold Standard" }]
     },
     {
+      id: "zano",
       column: "default", name: "Zano", ticker: "ZANO", url: "https://zano.org",
       reviewed: "2026-06-13",
       tech: "Ring signatures · Confidential assets", score: 7,
@@ -484,6 +509,7 @@
       tags: [{ type: "info", label: "Smart Contracts" }]
     },
     {
+      id: "beldex",
       column: "default", name: "Beldex", ticker: "BDX", url: "https://www.beldex.io",
       reviewed: "2025-09-01",
       tech: "Monero fork · RingCT", score: 6,
@@ -495,6 +521,7 @@
       tags: []
     },
     {
+      id: "mwc",
       column: "default", name: "MWC", ticker: "MWC", url: "https://www.mwc.mw",
       reviewed: "2025-04-10",
       tech: "MimbleWimble · No addresses on-chain", score: 6,
@@ -506,6 +533,7 @@
       tags: []
     },
     {
+      id: "zcash-shielded",
       column: "optin", name: "Zcash Shielded", ticker: "ZEC", url: "https://z.cash",
       reviewed: "2026-06-13",
       tech: "zk-SNARKs · Sapling / Orchard pools", score: 8,
@@ -517,6 +545,7 @@
       tags: [{ type: "warn", label: "Opt-In Adoption" }, { type: "ok", label: "Strong Crypto" }]
     },
     {
+      id: "railgun",
       column: "optin", name: "Railgun", ticker: "ETH", url: "https://railgun.org",
       reviewed: "2026-01-15",
       tech: "zk-SNARKs · DeFi privacy layer", score: 7,
@@ -528,6 +557,7 @@
       tags: [{ type: "info", label: "DeFi Native" }, { type: "ok", label: "Compliance Ready" }]
     },
     {
+      id: "tornado-cash",
       column: "optin", name: "Tornado Cash", ticker: "ETH", url: "https://tornado.ws",
       reviewed: "2026-06-13",
       tech: "zk-SNARK mixer · ETH / ERC-20", score: 7,
@@ -539,6 +569,7 @@
       tags: [{ type: "warn", label: "Legal Risk" }]
     },
     {
+      id: "samourai-whirlpool",
       column: "optin", name: "Samourai Whirlpool", ticker: "BTC", url: "https://samouraiwallet.com",
       reviewed: "2025-08-01",
       tech: "CoinJoin · Equal-output mixing", score: 5,
@@ -550,6 +581,7 @@
       tags: [{ type: "warn", label: "Founders Arrested" }, { type: "warn", label: "Disrupted" }]
     },
     {
+      id: "decred-cspp",
       column: "optin", name: "Decred CSPP", ticker: "DCR", url: "https://decred.org",
       reviewed: "2025-05-01",
       tech: "CoinShuffle++ · StakeShuffle", score: 5,
@@ -561,6 +593,7 @@
       tags: []
     },
     {
+      id: "dash-privatesend",
       column: "optin", name: "Dash PrivateSend", ticker: "DASH", url: "https://www.dash.org",
       reviewed: "2025-03-01",
       tech: "CoinJoin variant · Masternode mixing", score: 4,
@@ -590,6 +623,85 @@
   }
   function isStale(p) { return daysSince(p.reviewed) > STALE_AFTER_DAYS; }
 
+  /* ── live metrics (see metrics.json, written nightly by CI) ── */
+  const METRICS_URL = "metrics.json";
+  const METRIC_AGED_DAYS = 7;   // past this, the strip dims and says how old it is
+  let METRICS = null;
+
+  function compactNum(n) {
+    const abs = Math.abs(n);
+    if (abs >= 1e9) return (n / 1e9).toFixed(2) + "B";
+    if (abs >= 1e6) return (n / 1e6).toFixed(2) + "M";
+    if (abs >= 1e3) return (n / 1e3).toFixed(1) + "K";
+    return String(Math.round(n * 100) / 100);
+  }
+
+  function fmtMetric(v) {
+    if (v.format === "pct") return v.value.toFixed(1) + "%";
+    if (v.format === "usd") return "$" + compactNum(v.value);
+    if (v.format === "coin") return compactNum(v.value) + (v.unit ? " " + v.unit : "");
+    return compactNum(v.value);
+  }
+
+  function relTime(iso) {
+    const hours = (Date.now() - new Date(iso).getTime()) / 3600000;
+    if (!isFinite(hours)) return "unknown";
+    if (hours < 1) return "just now";
+    if (hours < 48) return Math.round(hours) + "h ago";
+    return Math.round(hours / 24) + "d ago";
+  }
+
+  function metricsHTML(rec) {
+    if (!rec) return "";
+    let values = null, fetched = null;
+    if (rec.status === "ok") {
+      values = rec.values; fetched = rec.fetched;
+    } else if (rec.status === "error" && rec.lastGood) {
+      values = rec.lastGood.values; fetched = rec.lastGood.fetched;
+    }
+    // unsourced, or an error with no history: render nothing at all. A
+    // permanent empty slot reads as a bug; absence is explained once in the
+    // methodology note, not repeated on every card.
+    if (!values || !values.length) return "";
+
+    const ageDays = (Date.now() - new Date(fetched).getTime()) / DAY_MS;
+    const aged = ageDays > METRIC_AGED_DAYS;
+    const rows = values.map((v) => {
+      let trend = "";
+      if (typeof v.trend30d === "number" && v.trend30d !== 0) {
+        const dir = v.trend30d > 0 ? "up" : "down";
+        const arrow = v.trend30d > 0 ? "▲" : "▼";
+        trend = `<span class="metric-trend ${dir}">${arrow} ${esc(Math.abs(v.trend30d).toFixed(1))}</span>`;
+      }
+      return `<div class="metric"><span class="metric-label">${esc(v.label)}</span>` +
+             `<span class="metric-value">${esc(fmtMetric(v))}${trend}</span></div>`;
+    }).join("");
+
+    return `<div class="metrics${aged ? " aged" : ""}">${rows}` +
+           `<div class="metrics-age">measured ${esc(relTime(fetched))}</div></div>`;
+  }
+
+  function metricFor(id) {
+    return METRICS && METRICS.metrics ? METRICS.metrics[id] : null;
+  }
+
+  function loadMetrics() {
+    fetch(METRICS_URL, { cache: "no-cache" })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error("HTTP " + r.status))))
+      .then((data) => {
+        if (!data || data.schema !== 1 || !data.metrics) {
+          throw new Error("unexpected metrics schema");
+        }
+        METRICS = data;
+        const age = document.getElementById("metrics-age");
+        age.textContent = "Metrics " + relTime(data.generated);
+        age.hidden = false;
+        document.getElementById("metrics-sep").hidden = false;
+        render();
+      })
+      .catch((e) => console.warn("[privacy-map] metrics unavailable:", e.message));
+  }
+
   function cardHTML(p) {
     const g = gradeOf(p.score);
     const stale = isStale(p);
@@ -615,6 +727,7 @@
         <div class="bar-track"><div class="bar-fill" style="width:${p.score * 10}%"></div></div>
         <ul class="card-body">${bullets}</ul>
         ${tags}
+        ${metricsHTML(metricFor(p.id))}
         ${reviewed}
       </div>`;
   }
@@ -654,6 +767,7 @@
   document.getElementById("search").addEventListener("input", render);
   document.getElementById("sort").addEventListener("change", render);
   render();
+  loadMetrics();
 </script>
 </body>
 </html>
