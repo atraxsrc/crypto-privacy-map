@@ -1,0 +1,83 @@
+{
+  "generated": "2026-08-29T03:24:33Z",
+  "metrics": {
+    "beldex": {
+      "reason": "no keyless public explorer API found",
+      "status": "unsourced"
+    },
+    "dash-privatesend": {
+      "reason": "PrivateSend usage is not exposed by a keyless endpoint",
+      "status": "unsourced"
+    },
+    "decred-cspp": {
+      "reason": "mixing participation is not exposed by a keyless endpoint",
+      "status": "unsourced"
+    },
+    "monero": {
+      "fetched": "2026-08-29T03:24:33Z",
+      "source": {
+        "name": "Coin Metrics",
+        "url": "https://charts.coinmetrics.io/network-data/"
+      },
+      "status": "ok",
+      "values": [
+        {
+          "format": "int",
+          "key": "tx_24h",
+          "label": "Transactions per day",
+          "value": 28347
+        }
+      ]
+    },
+    "mwc": {
+      "reason": "no keyless public explorer API found",
+      "status": "unsourced"
+    },
+    "railgun": {
+      "fetched": "2026-08-29T03:24:33Z",
+      "source": {
+        "name": "DefiLlama",
+        "url": "https://defillama.com/protocol/railgun"
+      },
+      "status": "ok",
+      "values": [
+        {
+          "format": "usd",
+          "key": "tvl",
+          "label": "Value in pool",
+          "value": 90809008.0
+        }
+      ]
+    },
+    "samourai-whirlpool": {
+      "reason": "coordinator seized in 2024; no live public statistics",
+      "status": "unsourced"
+    },
+    "tornado-cash": {
+      "fetched": "2026-08-29T03:24:33Z",
+      "source": {
+        "name": "Ethereum JSON-RPC",
+        "url": "https://etherscan.io/address/0xA160cdAB225685dA1d56aa342Ad8841c3b53f291"
+      },
+      "status": "ok",
+      "values": [
+        {
+          "format": "coin",
+          "key": "pool-100",
+          "label": "100 ETH pool",
+          "unit": "ETH",
+          "value": 244800.0
+        }
+      ]
+    },
+    "zano": {
+      "reason": "no keyless public API for transaction or pool statistics",
+      "status": "unsourced"
+    },
+    "zcash-shielded": {
+      "reason": "no keyless endpoint exposes shielded pool value; Blockchair's Zcash stats carry no shielded fields and the Coin Metrics community tier has no shielded metrics for ZEC",
+      "status": "unsourced"
+    }
+  },
+  "schema": 1
+}
