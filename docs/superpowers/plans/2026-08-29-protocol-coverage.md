@@ -40,9 +40,14 @@
 - **Card prose keeps the existing voice:** exactly three short declarative bullets per
   entry, matching the ten already there. Not two, not five.
 - **Run tests with:** `python3 -m unittest discover -s scripts/tests -v`
-- **Git note:** `~/.gitconfig` is unreadable in this environment. Prefix git commands
-  with `GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_SYSTEM=/dev/null GIT_AUTHOR_NAME=atraxsrc GIT_AUTHOR_EMAIL=92285717+atraxsrc@users.noreply.github.com GIT_COMMITTER_NAME=atraxsrc GIT_COMMITTER_EMAIL=92285717+atraxsrc@users.noreply.github.com`
-  or commits fail with "unknown error occurred while reading the configuration files".
+- **Git note:** `~/.gitconfig` is unreadable in this environment, so git needs
+  `GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_SYSTEM=/dev/null` on every command or it
+  fails with "unknown error occurred while reading the configuration files". For
+  author identity, do NOT invent one and do NOT copy one from any document: reuse
+  the identity this repo already uses, read from its own history.
+  `GIT_AUTHOR_NAME="$(git log -1 --format='%an')" GIT_AUTHOR_EMAIL="$(git log -1 --format='%ae')"`
+  and the matching `GIT_COMMITTER_*` pair. No `Co-Authored-By` trailer, no
+  `Claude-Session` trailer, and never an address in a commit message body.
 
 ## File Structure
 
