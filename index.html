@@ -28,7 +28,15 @@
     html { scroll-behavior: smooth; }
 
     body {
-      background: var(--tn-bg-dark);
+      /* Viewport-anchored and layered: two cool blooms lift the page off the
+         base, then a vignette pulls the edges down so the cards read as the
+         only lit surfaces on it. */
+      background:
+        radial-gradient(ellipse 85% 60% at 50% 42%, transparent 38%, rgba(0,0,0,.50) 100%),
+        radial-gradient(ellipse 120% 80% at 50% -12%, rgba(122,162,247,.11), transparent 62%),
+        radial-gradient(ellipse 110% 70% at 50% 112%, rgba(187,154,247,.075), transparent 60%),
+        var(--tn-bg-dark);
+      background-attachment: fixed;
       color: var(--tn-fg);
       font-family: var(--font);
       font-size: 13px;
@@ -47,9 +55,14 @@
     body::after {
       content: '';
       position: fixed; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, var(--tn-purple), var(--tn-blue), var(--tn-cyan));
+      background: linear-gradient(90deg,
+        var(--tn-purple), var(--tn-blue), var(--tn-cyan), var(--tn-blue), var(--tn-purple));
+      background-size: 200% 100%;
+      animation: railSweep 14s linear infinite;
+      box-shadow: 0 0 12px rgba(122,162,247,.55), 0 0 30px rgba(187,154,247,.25);
       z-index: 10;
     }
+    @keyframes railSweep { to { background-position: -200% 0; } }
 
     .wrapper {
       position: relative; z-index: 1;
@@ -78,8 +91,9 @@
       font-size: clamp(22px, 3.5vw, 42px);
       font-weight: 700; line-height: 1.1;
       color: var(--tn-fg-bright); letter-spacing: -0.5px;
+      text-shadow: 0 0 26px rgba(192,202,245,.22);
     }
-    header h1 .accent { color: var(--tn-purple); }
+    header h1 .accent { color: var(--tn-purple); text-shadow: 0 0 20px rgba(187,154,247,.50); }
     header .sub { margin-top: 10px; font-size: 11.5px; color: var(--tn-comment); }
     header .sub span { color: var(--tn-cyan); }
 
@@ -113,8 +127,8 @@
     .sh-badge.y { background: rgba(224,175,104,.12); color: var(--tn-yellow); border: 1px solid rgba(224,175,104,.3); }
 
     .section-header h2 { font-size: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; }
-    .section-header.left  h2 { color: var(--tn-green); }
-    .section-header.right h2 { color: var(--tn-yellow); }
+    .section-header.left  h2 { color: var(--tn-green);  text-shadow: 0 0 18px rgba(158,206,106,.40); }
+    .section-header.right h2 { color: var(--tn-yellow); text-shadow: 0 0 18px rgba(224,175,104,.35); }
     .section-header .desc { font-size: 11px; color: var(--tn-comment); margin-top: 4px; }
 
     /* ── CONTROLS ── */
@@ -151,12 +165,16 @@
     }
     .card:hover { transform: translateY(-2px); }
 
-    .grade-high { border-left: 3px solid var(--tn-green);  }
-    .grade-high:hover { border-color: var(--tn-green);  box-shadow: 0 6px 28px rgba(158,206,106,.12); }
-    .grade-mid  { border-left: 3px solid var(--tn-yellow); }
-    .grade-mid:hover  { border-color: var(--tn-yellow); box-shadow: 0 6px 28px rgba(224,175,104,.12); }
-    .grade-low  { border-left: 3px solid var(--tn-red);    }
-    .grade-low:hover  { border-color: var(--tn-red);    box-shadow: 0 6px 28px rgba(247,118,142,.12); }
+    /* Luminance carries the grade. A card emits light in proportion to how
+       much privacy it actually delivers, so the strongest protocols are
+       literally the brightest things on the page and the weakest barely
+       smoulder. The alpha ramp below is the whole idea. */
+    .grade-high { border-left: 3px solid var(--tn-green);  box-shadow: -3px 0 18px -6px rgba(158,206,106,.55); }
+    .grade-high:hover { border-color: var(--tn-green);  box-shadow: -3px 0 26px -5px rgba(158,206,106,.75), 0 6px 30px rgba(158,206,106,.18); }
+    .grade-mid  { border-left: 3px solid var(--tn-yellow); box-shadow: -3px 0 18px -6px rgba(224,175,104,.32); }
+    .grade-mid:hover  { border-color: var(--tn-yellow); box-shadow: -3px 0 26px -5px rgba(224,175,104,.50), 0 6px 30px rgba(224,175,104,.16); }
+    .grade-low  { border-left: 3px solid var(--tn-red);    box-shadow: -3px 0 18px -6px rgba(247,118,142,.16); }
+    .grade-low:hover  { border-color: var(--tn-red);    box-shadow: -3px 0 26px -5px rgba(247,118,142,.30), 0 6px 30px rgba(247,118,142,.14); }
 
     .card:nth-child(1){animation-delay:.04s} .card:nth-child(2){animation-delay:.10s}
     .card:nth-child(3){animation-delay:.16s} .card:nth-child(4){animation-delay:.22s}
@@ -186,21 +204,23 @@
       font-size: 14px; font-weight: 700;
       padding: 1px 10px; border-radius: 3px;
     }
-    .grade-high .score-num { color: var(--tn-green);  background: rgba(158,206,106,.1); border: 1px solid rgba(158,206,106,.25); }
-    .grade-mid  .score-num { color: var(--tn-yellow); background: rgba(224,175,104,.1); border: 1px solid rgba(224,175,104,.25); }
-    .grade-low  .score-num { color: var(--tn-red);    background: rgba(247,118,142,.1); border: 1px solid rgba(247,118,142,.25); }
+    .grade-high .score-num { color: var(--tn-green);  background: rgba(158,206,106,.1); border: 1px solid rgba(158,206,106,.35); box-shadow: 0 0 18px rgba(158,206,106,.35), inset 0 0 14px rgba(158,206,106,.12); }
+    .grade-mid  .score-num { color: var(--tn-yellow); background: rgba(224,175,104,.1); border: 1px solid rgba(224,175,104,.30); box-shadow: 0 0 18px rgba(224,175,104,.22), inset 0 0 14px rgba(224,175,104,.08); }
+    .grade-low  .score-num { color: var(--tn-red);    background: rgba(247,118,142,.1); border: 1px solid rgba(247,118,142,.25); box-shadow: 0 0 18px rgba(247,118,142,.12), inset 0 0 14px rgba(247,118,142,.05); }
 
     .score-grade { font-size: 9px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
     .grade-high .score-grade { color: var(--tn-green); }
     .grade-mid  .score-grade { color: var(--tn-yellow); }
     .grade-low  .score-grade { color: var(--tn-red); }
 
-    .bar-track { height: 2px; background: var(--tn-border); border-radius: 2px; margin-bottom: 10px; overflow: hidden; }
+    /* overflow visible so the fill's glow can spill past the track. The fill
+       never exceeds 100% width, so nothing else escapes. */
+    .bar-track { height: 2px; background: var(--tn-border); border-radius: 2px; margin-bottom: 10px; overflow: visible; }
     .bar-fill { height: 100%; border-radius: 2px; animation: growBar 1s cubic-bezier(.4,0,.2,1) both; animation-delay: inherit; }
     @keyframes growBar { from { width: 0 !important; } }
-    .grade-high .bar-fill { background: var(--tn-green);  }
-    .grade-mid  .bar-fill { background: var(--tn-yellow); }
-    .grade-low  .bar-fill { background: var(--tn-red);    }
+    .grade-high .bar-fill { background: linear-gradient(90deg, rgba(158,206,106,.28), var(--tn-green));  box-shadow: 0 0 12px rgba(158,206,106,.75); }
+    .grade-mid  .bar-fill { background: linear-gradient(90deg, rgba(224,175,104,.28), var(--tn-yellow)); box-shadow: 0 0 12px rgba(224,175,104,.50); }
+    .grade-low  .bar-fill { background: linear-gradient(90deg, rgba(247,118,142,.28), var(--tn-red));    box-shadow: 0 0 12px rgba(247,118,142,.30); }
 
     .card-body { font-size: 12px; color: #6d7fa8; line-height: 1.75; }
     .card-body li { list-style: none; padding-left: 16px; position: relative; }
@@ -241,6 +261,7 @@
     .methodology > h3 {
       font-size: 12px; font-weight: 700; text-transform: uppercase;
       letter-spacing: 2px; color: var(--tn-cyan); margin-bottom: 6px;
+      text-shadow: 0 0 18px rgba(125,207,255,.40);
     }
     .methodology > p.lead { font-size: 12px; color: var(--tn-comment); line-height: 1.8; margin-bottom: 22px; max-width: 760px; }
     .methodology > p.lead code { color: var(--tn-fg-bright); }
@@ -306,6 +327,30 @@
       .divider { display: none; }
       .bottom  { grid-template-columns: 1fr; }
       .factors { grid-template-columns: 1fr; }
+    }
+
+    /* ── FOCUS ──
+       The controls set outline:none and signalled focus with a border colour
+       alone, which is close to invisible against the card borders. A neon ring
+       suits the palette and is the one place a glow is load-bearing rather
+       than decorative. */
+    a:focus-visible,
+    .controls input[type="search"]:focus-visible,
+    .controls select:focus-visible {
+      outline: 2px solid var(--tn-cyan);
+      outline-offset: 2px;
+      border-radius: 3px;
+      box-shadow: 0 0 16px rgba(125,207,255,.45);
+    }
+
+    /* Nothing here is information, so it can all stop. */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+      }
     }
   </style>
 </head>
