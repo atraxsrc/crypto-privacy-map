@@ -1,0 +1,52 @@
+name: metrics
+
+on:
+  schedule:
+    # 03:17 UTC. Off the hour on purpose: public endpoints get hammered by
+    # every cron scheduled at :00.
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: metrics
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # No setup-python and no install step: the runner ships a usable Python 3
+      # and the pipeline has no dependencies.
+      - name: Run test suite
+        run: python3 -m unittest discover -s scripts/tests -v
+
+      - name: Fetch metrics
+        id: fetch
+        continue-on-error: true
+        run: python3 scripts/fetch_metrics.py
+
+      - name: Commit if changed
+        run: |
+          if git diff --quiet -- metrics.json; then
+            echo "no metric changes"
+            exit 0
+          fi
+          # Reuse the identity this repo already commits under, rather than
+          # hard-coding an address anywhere in the tree.
+          git config user.name  "$(git log -1 --format='%an')"
+          git config user.email "$(git log -1 --format='%ae')"
+          git add metrics.json
+          git commit -m "chore(metrics): nightly refresh"
+          git push
+
+      - name: Surface widespread source failure
+        if: steps.fetch.outcome == 'failure'
+        run: |
+          echo "More than half the sources failed. Data was still written and"
+          echo "committed, so lastGood is preserved. Check the fetch step log."
+          exit 1
