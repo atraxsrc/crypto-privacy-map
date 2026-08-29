@@ -4,6 +4,7 @@ Pure logic: no network, no filesystem, no clock. Everything here is a function o
 its arguments, so the whole module is testable offline and deterministically.
 """
 
+import math
 import re
 
 SCHEMA_VERSION = 1
@@ -20,6 +21,11 @@ def make_value(key, label, value, fmt, unit=None, trend30d=None):
     # bool is a subclass of int; a True reaching the page is always a bug.
     if isinstance(value, bool) or not isinstance(value, (int, float)):
         raise ValueError(f"value must be numeric, got {type(value).__name__}")
+    # NaN and the infinities are numeric but not JSON. json.dump writes them as
+    # bare NaN/Infinity literals, which JSON.parse rejects - so one bad average
+    # upstream would take the whole metrics strip off the page.
+    if not math.isfinite(value):
+        raise ValueError(f"value must be finite, got {value!r}")
     out = {"key": key, "label": label, "value": value, "format": fmt}
     if unit is not None:
         out["unit"] = unit
@@ -41,6 +47,8 @@ def _validate_value(v, where):
         raise ValueError(f"{where}: unknown format {v['format']!r}")
     if isinstance(v["value"], bool) or not isinstance(v["value"], (int, float)):
         raise ValueError(f"{where}: value must be numeric")
+    if not math.isfinite(v["value"]):
+        raise ValueError(f"{where}: value must be finite")
 
 
 def _validate_payload(payload, where):
@@ -70,6 +78,10 @@ def validate_output(out):
         raise ValueError("metrics must be an object")
 
     for pid, rec in metrics.items():
+        # Without this, a None or int slot raises AttributeError from .get and
+        # escapes callers that catch ValueError per this function's contract.
+        if not isinstance(rec, dict):
+            raise ValueError(f"{pid}: record must be an object, got {type(rec).__name__}")
         status = rec.get("status")
         if status not in STATUSES:
             raise ValueError(f"{pid}: unknown status {status!r}")

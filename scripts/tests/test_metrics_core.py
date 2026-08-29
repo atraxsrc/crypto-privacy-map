@@ -41,6 +41,11 @@ class MakeValueTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "must be numeric"):
             make_value("x", "X", True, "int")
 
+    def test_rejects_non_finite_value(self):
+        for bad in (float("nan"), float("inf"), float("-inf")):
+            with self.assertRaisesRegex(ValueError, "must be finite"):
+                make_value("x", "X", bad, "int")
+
 
 class ValidateOutputTest(unittest.TestCase):
     def test_accepts_well_formed_document(self):
@@ -82,6 +87,21 @@ class ValidateOutputTest(unittest.TestCase):
     def test_rejects_malformed_generated_timestamp(self):
         with self.assertRaisesRegex(ValueError, "generated"):
             validate_output(build_output({}, "yesterday"))
+
+    def test_rejects_non_dict_record(self):
+        # .get on a non-dict would raise AttributeError, which escapes callers
+        # that catch ValueError per this function's documented contract.
+        for bad in (None, 42, "ok", []):
+            with self.assertRaisesRegex(ValueError, "must be an object"):
+                validate_output(build_output({"x": bad}, NOW))
+
+    def test_rejects_non_finite_value_that_bypassed_make_value(self):
+        # json.dump would emit a bare Infinity literal here, which is not valid
+        # JSON and would make the page's r.json() throw.
+        rec = ok_record()
+        rec["values"] = [{"key": "x", "label": "X", "value": float("inf"), "format": "int"}]
+        with self.assertRaisesRegex(ValueError, "must be finite"):
+            validate_output(build_output({"x": rec}, NOW))
 
 
 if __name__ == "__main__":
