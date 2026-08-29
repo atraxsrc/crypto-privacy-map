@@ -284,6 +284,11 @@ class MakeValueTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "must be numeric"):
             make_value("x", "X", True, "int")
 
+    def test_rejects_non_finite_value(self):
+        for bad in (float("nan"), float("inf"), float("-inf")):
+            with self.assertRaisesRegex(ValueError, "must be finite"):
+                make_value("x", "X", bad, "int")
+
 
 class ValidateOutputTest(unittest.TestCase):
     def test_accepts_well_formed_document(self):
@@ -326,6 +331,21 @@ class ValidateOutputTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "generated"):
             validate_output(build_output({}, "yesterday"))
 
+    def test_rejects_non_dict_record(self):
+        # .get on a non-dict would raise AttributeError, which escapes callers
+        # that catch ValueError per this function's documented contract.
+        for bad in (None, 42, "ok", []):
+            with self.assertRaisesRegex(ValueError, "must be an object"):
+                validate_output(build_output({"x": bad}, NOW))
+
+    def test_rejects_non_finite_value_that_bypassed_make_value(self):
+        # json.dump would emit a bare Infinity literal here, which is not valid
+        # JSON and would make the page's r.json() throw.
+        rec = ok_record()
+        rec["values"] = [{"key": "x", "label": "X", "value": float("inf"), "format": "int"}]
+        with self.assertRaisesRegex(ValueError, "must be finite"):
+            validate_output(build_output({"x": rec}, NOW))
+
 
 if __name__ == "__main__":
     unittest.main()
@@ -347,6 +367,7 @@ Pure logic: no network, no filesystem, no clock. Everything here is a function o
 its arguments, so the whole module is testable offline and deterministically.
 """
 
+import math
 import re
 
 SCHEMA_VERSION = 1
@@ -363,6 +384,11 @@ def make_value(key, label, value, fmt, unit=None, trend30d=None):
     # bool is a subclass of int; a True reaching the page is always a bug.
     if isinstance(value, bool) or not isinstance(value, (int, float)):
         raise ValueError(f"value must be numeric, got {type(value).__name__}")
+    # NaN and the infinities are numeric but not JSON. json.dump writes them as
+    # bare NaN/Infinity literals, which JSON.parse rejects - so one bad average
+    # upstream would take the whole metrics strip off the page.
+    if not math.isfinite(value):
+        raise ValueError(f"value must be finite, got {value!r}")
     out = {"key": key, "label": label, "value": value, "format": fmt}
     if unit is not None:
         out["unit"] = unit
@@ -384,6 +410,8 @@ def _validate_value(v, where):
         raise ValueError(f"{where}: unknown format {v['format']!r}")
     if isinstance(v["value"], bool) or not isinstance(v["value"], (int, float)):
         raise ValueError(f"{where}: value must be numeric")
+    if not math.isfinite(v["value"]):
+        raise ValueError(f"{where}: value must be finite")
 
 
 def _validate_payload(payload, where):
@@ -413,6 +441,10 @@ def validate_output(out):
         raise ValueError("metrics must be an object")
 
     for pid, rec in metrics.items():
+        # Without this, a None or int slot raises AttributeError from .get and
+        # escapes callers that catch ValueError per this function's contract.
+        if not isinstance(rec, dict):
+            raise ValueError(f"{pid}: record must be an object, got {type(rec).__name__}")
         status = rec.get("status")
         if status not in STATUSES:
             raise ValueError(f"{pid}: unknown status {status!r}")
@@ -431,7 +463,7 @@ def validate_output(out):
 - [ ] **Step 4: Run the tests to verify they pass**
 
 Run: `python3 -m unittest discover -s scripts/tests -v`
-Expected: PASS, 17 tests
+Expected: PASS, 20 tests
 
 - [ ] **Step 5: Commit**
 
@@ -545,7 +577,7 @@ def merge_previous(records, previous):
 - [ ] **Step 4: Run the tests to verify they pass**
 
 Run: `python3 -m unittest discover -s scripts/tests -v`
-Expected: PASS, 22 tests
+Expected: PASS, 25 tests
 
 - [ ] **Step 5: Commit**
 
@@ -758,7 +790,7 @@ def http_post_json(url, payload, timeout=TIMEOUT_S, retries=RETRIES, opener=None
 - [ ] **Step 4: Run the tests to verify they pass**
 
 Run: `python3 -m unittest discover -s scripts/tests -v`
-Expected: PASS, 31 tests
+Expected: PASS, 34 tests
 
 - [ ] **Step 5: Commit**
 
@@ -1027,7 +1059,9 @@ def write_atomic(path, data):
     fd, tmp = tempfile.mkstemp(dir=str(path.parent), suffix=".tmp")
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2, sort_keys=True)
+            # allow_nan=False: a non-finite value must fail loudly here rather
+            # than ship a metrics.json the browser cannot parse.
+            json.dump(data, f, indent=2, sort_keys=True, allow_nan=False)
             f.write("\n")
         os.replace(tmp, path)
     except BaseException:
@@ -1081,7 +1115,7 @@ if __name__ == "__main__":
 - [ ] **Step 4: Run the tests to verify they pass**
 
 Run: `python3 -m unittest discover -s scripts/tests -v`
-Expected: PASS, 46 tests
+Expected: PASS, 49 tests
 
 - [ ] **Step 5: Commit**
 
@@ -1194,7 +1228,7 @@ UNSOURCED = {
 - [ ] **Step 4: Run the tests to verify they pass**
 
 Run: `python3 -m unittest discover -s scripts/tests -v`
-Expected: PASS, 51 tests
+Expected: PASS, 54 tests
 
 - [ ] **Step 5: Verify the runner produces a complete document**
 
