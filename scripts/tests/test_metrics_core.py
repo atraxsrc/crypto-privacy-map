@@ -3,7 +3,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
 
 import unittest
 
-from metrics_core import build_output, make_value, validate_output
+from metrics_core import build_output, make_value, validate_output, merge_previous
 
 NOW = "2026-08-29T03:17:44Z"
 
@@ -102,6 +102,53 @@ class ValidateOutputTest(unittest.TestCase):
         rec["values"] = [{"key": "x", "label": "X", "value": float("inf"), "format": "int"}]
         with self.assertRaisesRegex(ValueError, "must be finite"):
             validate_output(build_output({"x": rec}, NOW))
+
+
+class MergePreviousTest(unittest.TestCase):
+    OLD = "2026-08-26T03:17:12Z"
+
+    def _previous(self, record):
+        return {"schema": 1, "generated": self.OLD, "metrics": {"railgun": record}}
+
+    def test_error_inherits_previous_ok_values(self):
+        prev_ok = {
+            "status": "ok", "fetched": self.OLD,
+            "source": {"name": "DefiLlama", "url": "https://defillama.com"},
+            "values": [make_value("tvl", "TVL", 1000, "usd")],
+        }
+        merged = merge_previous(
+            {"railgun": {"status": "error", "error": "boom"}}, self._previous(prev_ok))
+        self.assertEqual(merged["railgun"]["lastGood"]["fetched"], self.OLD)
+        self.assertEqual(merged["railgun"]["lastGood"]["values"][0]["value"], 1000)
+
+    def test_last_good_carries_across_consecutive_failures(self):
+        # Second failure in a row must keep the original good payload and its
+        # original age, not silently restamp it as fresh.
+        carried = {
+            "fetched": self.OLD,
+            "source": {"name": "DefiLlama", "url": "https://defillama.com"},
+            "values": [make_value("tvl", "TVL", 1000, "usd")],
+        }
+        prev_err = {"status": "error", "error": "boom", "lastGood": carried}
+        merged = merge_previous(
+            {"railgun": {"status": "error", "error": "boom again"}}, self._previous(prev_err))
+        self.assertEqual(merged["railgun"]["lastGood"], carried)
+        self.assertEqual(merged["railgun"]["error"], "boom again")
+
+    def test_error_without_history_gets_no_last_good(self):
+        merged = merge_previous({"railgun": {"status": "error", "error": "boom"}}, None)
+        self.assertNotIn("lastGood", merged["railgun"])
+
+    def test_ok_record_is_untouched(self):
+        rec = ok_record()
+        merged = merge_previous({"railgun": rec}, self._previous(ok_record()))
+        self.assertEqual(merged["railgun"], rec)
+        self.assertNotIn("lastGood", merged["railgun"])
+
+    def test_unsourced_never_gets_last_good(self):
+        merged = merge_previous(
+            {"railgun": {"status": "unsourced", "reason": "none"}}, self._previous(ok_record()))
+        self.assertNotIn("lastGood", merged["railgun"])
 
 
 if __name__ == "__main__":
