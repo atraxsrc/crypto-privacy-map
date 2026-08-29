@@ -1,0 +1,35 @@
+{
+  "id": "1320",
+  "name": "Railgun",
+  "address": "0xe76c6c83af64e4c60245d8c7de953df673a7a33d",
+  "symbol": "RAIL",
+  "url": "https://railgun.org",
+  "chains": [
+    "Ethereum",
+    "Polygon",
+    "Arbitrum",
+    "Binance"
+  ],
+  "currentChainTvls": {
+    "Ethereum-staking": 85494249.24546,
+    "Polygon": 588770.91716,
+    "Arbitrum": 3351813.47646,
+    "Ethereum": 86031248.26638,
+    "Binance": 837175.83718,
+    "staking": 85494249.24546
+  },
+  "tvl": [
+    {
+      "date": 1787875200,
+      "totalLiquidityUSD": 92197170
+    },
+    {
+      "date": 1787961600,
+      "totalLiquidityUSD": 90574410
+    },
+    {
+      "date": 1787969315,
+      "totalLiquidityUSD": 90809008
+    }
+  ]
+}
