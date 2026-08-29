@@ -47,9 +47,11 @@ the project is built to stay fresh:
 - **Per-entry review dates** - each entry has a `reviewed` date. Anything older than
   `STALE_AFTER_DAYS` (180) is flagged with a *Review due* chip, and the footer tallies how
   many entries need a refresh.
-- **Automated watch** - a weekly cloud agent researches each protocol for material changes
-  and opens a PR (confirmed, sourced changes) or an issue (unverified leads) when the data
-  drifts.
+- **Nightly metrics** - a GitHub Action fetches measured figures (pool balances,
+  shielded shares, transaction counts) from public, key-free sources and commits
+  them to `metrics.json`. The page layers these onto the cards. Measured data
+  never changes a score: scores stay hand-set. Protocols with no keyless public
+  source simply carry no measured figures.
 
 ## Updating the data
 
@@ -59,6 +61,23 @@ the project is built to stay fresh:
 4. Open it in a browser to check, then commit.
 
 No build step, no dependencies - it's a single static HTML file.
+
+## The metrics pipeline
+
+`metrics.json` is generated. Do not edit it by hand.
+
+```bash
+python3 scripts/fetch_metrics.py --dry-run     # print, write nothing
+python3 scripts/fetch_metrics.py               # write metrics.json
+python3 -m unittest discover -s scripts/tests  # run the tests
+```
+
+Python 3 standard library only - no dependencies, no API keys, no secrets.
+
+To add a protocol: add its entry to `DATA` in `index.html` with a unique `id`,
+then classify that id in `scripts/sources/__init__.py` as either a source in
+`REGISTRY` or an entry in `UNSOURCED` with a reason. `test_registry_coverage`
+fails until you do, which is deliberate.
 
 ## Tech
 
