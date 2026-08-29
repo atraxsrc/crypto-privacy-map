@@ -21,7 +21,14 @@
 - **Writing style:** plain hyphens only in all new code, comments, docs, and commit messages. No em-dashes or en-dashes. (Existing `8–10` band labels in `index.html` are pre-existing content; leave them alone.)
 - **Run tests with:** `python3 -m unittest discover -s scripts/tests -v`
 - **Commit style:** no `Co-Authored-By` trailer. Author is the repo owner.
-- **Git note:** `~/.gitconfig` is unreadable in this environment. Prefix git commands with `GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_SYSTEM=/dev/null GIT_AUTHOR_NAME=atraxsrc GIT_AUTHOR_EMAIL=92285717+atraxsrc@users.noreply.github.com GIT_COMMITTER_NAME=atraxsrc GIT_COMMITTER_EMAIL=92285717+atraxsrc@users.noreply.github.com` or commits will fail with "unknown error occurred while reading the configuration files".
+- **Git note:** `~/.gitconfig` is unreadable in this environment, so git needs
+  `GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_SYSTEM=/dev/null` on every command or it
+  fails with "unknown error occurred while reading the configuration files". For
+  author identity, do NOT invent one and do NOT copy one from any document: reuse
+  the identity this repo already uses, read from its own history.
+  `GIT_AUTHOR_NAME="$(git log -1 --format='%an')" GIT_AUTHOR_EMAIL="$(git log -1 --format='%ae')"`
+  and the matching `GIT_COMMITTER_*` pair. No `Co-Authored-By` trailer, no
+  `Claude-Session` trailer, and never an address in a commit message body.
 
 ## File Structure
 
@@ -1753,8 +1760,10 @@ jobs:
             echo "no metric changes"
             exit 0
           fi
-          git config user.name  "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # Reuse the identity this repo already commits under, rather than
+          # hard-coding an address anywhere in the tree.
+          git config user.name  "$(git log -1 --format='%an')"
+          git config user.email "$(git log -1 --format='%ae')"
           git add metrics.json
           git commit -m "chore(metrics): nightly refresh"
           git push
