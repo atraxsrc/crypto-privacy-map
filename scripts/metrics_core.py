@@ -95,3 +95,30 @@ def validate_output(out):
                 raise ValueError(f"{pid}: error record needs an error message")
             if rec.get("lastGood") is not None:
                 _validate_payload(rec["lastGood"], f"{pid}.lastGood")
+
+
+def merge_previous(records, previous):
+    """Attach lastGood to error records using the previous run's data.
+
+    An error record inherits the newest known-good payload: the previous run's
+    ok values, or whatever lastGood that run was already carrying. Preserving
+    the original `fetched` across consecutive failures is the point - the page
+    must be able to say how old the number really is, so a card degrades to
+    labelled-old instead of going blank.
+    """
+    prev = (previous or {}).get("metrics", {})
+    merged = {}
+    for pid, rec in records.items():
+        if rec.get("status") != "error":
+            merged[pid] = rec
+            continue
+        old = prev.get(pid, {})
+        if old.get("status") == "ok":
+            good = {"fetched": old["fetched"], "source": old["source"],
+                    "values": old["values"]}
+        elif old.get("lastGood"):
+            good = old["lastGood"]
+        else:
+            good = None
+        merged[pid] = {**rec, "lastGood": good} if good else rec
+    return merged
