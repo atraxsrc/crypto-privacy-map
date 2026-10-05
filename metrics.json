@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-04T09:54:45Z",
+  "generated": "2026-10-05T10:37:11Z",
   "metrics": {
     "beldex": {
       "reason": "no keyless public explorer API found",
@@ -14,7 +14,7 @@
       "status": "unsourced"
     },
     "monero": {
-      "fetched": "2026-10-04T09:54:45Z",
+      "fetched": "2026-10-05T10:37:11Z",
       "source": {
         "name": "Coin Metrics",
         "url": "https://charts.coinmetrics.io/network-data/"
@@ -25,7 +25,7 @@
           "format": "int",
           "key": "tx_24h",
           "label": "Transactions per day",
-          "value": 24200
+          "value": 24481
         }
       ]
     },
@@ -34,7 +34,7 @@
       "status": "unsourced"
     },
     "railgun": {
-      "fetched": "2026-10-04T09:54:45Z",
+      "fetched": "2026-10-05T10:37:11Z",
       "source": {
         "name": "DefiLlama",
         "url": "https://defillama.com/protocol/railgun"
@@ -45,7 +45,7 @@
           "format": "usd",
           "key": "tvl",
           "label": "Value in pool",
-          "value": 115235954.0
+          "value": 116759143.0
         }
       ]
     },
@@ -54,7 +54,7 @@
       "status": "unsourced"
     },
     "tornado-cash": {
-      "fetched": "2026-10-04T09:54:45Z",
+      "fetched": "2026-10-05T10:37:11Z",
       "source": {
         "name": "Ethereum JSON-RPC",
         "url": "https://etherscan.io/address/0xA160cdAB225685dA1d56aa342Ad8841c3b53f291"
@@ -66,7 +66,7 @@
           "key": "pool-100",
           "label": "100 ETH pool",
           "unit": "ETH",
-          "value": 231700.0
+          "value": 231100.0
         }
       ]
     },
