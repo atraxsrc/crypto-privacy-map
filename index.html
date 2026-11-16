@@ -4,6 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Default vs Opt-In Privacy: The Truth Behind the Protocols</title>
+  <meta name="description" content="A sourced map grading crypto privacy protocols 0-10 by the privacy they deliver in practice. Private-by-default vs opt-in: Monero, Zcash, Railgun, Tornado Cash and more." />
+  <meta name="theme-color" content="#16161e" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Default vs Opt-In Privacy: The Truth Behind the Protocols" />
+  <meta property="og:description" content="Crypto privacy protocols graded 0-10 by real-world privacy, with sources on every card." />
+  <meta property="og:url" content="https://atraxsrc.github.io/crypto-privacy-map/" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2316161e'/%3E%3Crect x='9' y='14' width='14' height='11' rx='2' fill='%239ece6a'/%3E%3Cpath d='M11.5 14v-3a4.5 4.5 0 0 1 9 0v3' fill='none' stroke='%239ece6a' stroke-width='2.5'/%3E%3C/svg%3E" />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     /* ── TOKYO NIGHT PALETTE ── */
@@ -168,10 +176,9 @@
       background: var(--tn-bg-hi);
       border: 1px solid var(--tn-border);
       border-radius: 5px; padding: 15px 18px; margin-bottom: 11px;
-      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      transition: box-shadow .18s ease, border-color .18s ease;
       animation: fadeUp .45s ease both;
     }
-    .card:hover { transform: translateY(-2px); }
 
     /* Luminance carries the grade. A card emits light in proportion to how
        much privacy it actually delivers, so the strongest protocols are
@@ -278,6 +285,8 @@
     .metric-trend.up { color: var(--tn-green); }
     .metric-trend.down { color: var(--tn-red); }
     .metrics-age { margin-top: 6px; font-size: 11px; color: var(--tn-muted); }
+    .metrics-age a { color: var(--tn-blue); text-decoration: none; }
+    .metrics-age a:hover { text-decoration: underline; }
 
     /* ── METHODOLOGY ── */
     .methodology {
@@ -782,11 +791,11 @@
 
   function metricsHTML(rec) {
     if (!rec) return "";
-    let values = null, fetched = null;
+    let values = null, fetched = null, source = null;
     if (rec.status === "ok") {
-      values = rec.values; fetched = rec.fetched;
+      values = rec.values; fetched = rec.fetched; source = rec.source;
     } else if (rec.status === "error" && rec.lastGood) {
-      values = rec.lastGood.values; fetched = rec.lastGood.fetched;
+      values = rec.lastGood.values; fetched = rec.lastGood.fetched; source = rec.lastGood.source;
     }
     // unsourced, or an error with no history: render nothing at all. A
     // permanent empty slot reads as a bug; absence is explained once in the
@@ -807,7 +816,11 @@
     }).join("");
 
     return `<div class="metrics${aged ? " aged" : ""}">${rows}` +
-           `<div class="metrics-age">measured ${esc(relTime(fetched))}</div></div>`;
+           `<div class="metrics-age">measured ${esc(relTime(fetched))}` +
+           (source && source.url
+             ? ` via <a href="${esc(source.url)}" target="_blank" rel="noopener">${esc(source.name || "source")}</a>`
+             : "") +
+           `</div></div>`;
   }
 
   function metricFor(id) {
@@ -905,8 +918,26 @@
   const staleCount = DATA.filter(isStale).length;
   document.getElementById("stale-summary").textContent =
     staleCount ? `${staleCount} of ${DATA.length} need review` : "All entries current";
-  document.getElementById("search").addEventListener("input", render);
-  document.getElementById("sort").addEventListener("change", render);
+  /* Search and sort live in the query string so a filtered view can be shared. */
+  const SORT_MODES = ["default", "score-desc", "score-asc", "reviewed", "name"];
+  (function restoreState() {
+    const params = new URLSearchParams(location.search);
+    const q = params.get("q");
+    const sort = params.get("sort");
+    if (q) document.getElementById("search").value = q;
+    if (sort && SORT_MODES.includes(sort)) document.getElementById("sort").value = sort;
+  })();
+  function saveState() {
+    const params = new URLSearchParams();
+    const q = document.getElementById("search").value.trim();
+    const sort = document.getElementById("sort").value;
+    if (q) params.set("q", q);
+    if (sort !== "default") params.set("sort", sort);
+    const qs = params.toString();
+    try { history.replaceState(null, "", qs ? "?" + qs : location.pathname); } catch (e) { /* file:// */ }
+  }
+  document.getElementById("search").addEventListener("input", () => { render(); saveState(); });
+  document.getElementById("sort").addEventListener("change", () => { render(); saveState(); });
   render();
   loadMetrics();
 </script>
