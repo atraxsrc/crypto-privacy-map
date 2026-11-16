@@ -118,6 +118,57 @@
     .legend-item { display: flex; align-items: center; gap: 7px; font-size: 11px; font-weight: 500; }
     .ldot { width: 8px; height: 8px; border-radius: 50%; }
 
+    /* ── OVERVIEW ──
+       Position carries the score and text carries the grade. The band tints
+       only echo the labels: the green/yellow pair is indistinguishable under
+       deuteranopia, so nothing here relies on hue. */
+    .overview {
+      margin-bottom: 32px; padding: 16px 18px 12px; overflow-x: clip;
+      background: var(--tn-bg-hi); border: 1px solid var(--tn-border); border-radius: 5px;
+    }
+    .overview h3 {
+      font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;
+      color: var(--tn-cyan); margin-bottom: 10px;
+    }
+    .ov { --ov-name: 170px; }
+    .ov-row, .ov-axis { display: grid; grid-template-columns: var(--ov-name) 1fr; align-items: center; gap: 12px; }
+    .ov-group {
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
+      color: var(--tn-muted); margin: 10px 0 2px;
+    }
+    .ov-group .avg { color: var(--tn-fg-bright); text-transform: none; letter-spacing: 0; font-weight: 500; margin-left: 6px; }
+    .ov-row { min-height: 26px; text-decoration: none; color: var(--tn-fg); border-radius: 3px; }
+    .ov-row:hover .ov-name, .ov-row:focus-visible .ov-name { color: var(--tn-fg-bright); }
+    .ov-name { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ov-scale { position: relative; height: 26px; margin: 0 7px; }
+    .ov-scale::before {
+      content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 2px; transform: translateY(-50%);
+      background: linear-gradient(90deg,
+        rgba(247,118,142,.30) 0 60%, rgba(224,175,104,.30) 60% 80%, rgba(158,206,106,.30) 80% 100%);
+      border-radius: 1px;
+    }
+    .ov-dot {
+      position: absolute; top: 50%; width: 11px; height: 11px; border-radius: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--tn-fg-bright); box-shadow: 0 0 0 2px var(--tn-bg-hi);
+    }
+    .ov-tip {
+      position: absolute; bottom: calc(50% + 10px); transform: translateX(-50%);
+      background: var(--tn-bg-dark); border: 1px solid var(--tn-border); border-radius: 3px;
+      padding: 2px 8px; font-size: 11px; color: var(--tn-fg-bright); white-space: nowrap;
+      pointer-events: none; opacity: 0; transition: opacity .12s; z-index: 2;
+    }
+    .ov-tip.end { transform: translateX(10px); }
+    .ov-row:hover .ov-tip, .ov-row:focus-visible .ov-tip { opacity: 1; }
+    .ov-row:hover .ov-dot, .ov-row:focus-visible .ov-dot { box-shadow: 0 0 0 2px var(--tn-bg-hi), 0 0 0 4px var(--tn-cyan); }
+    .ov-axis { margin-top: 6px; }
+    .ov-axis .ov-scale { height: 30px; }
+    .ov-axis .ov-scale::before { display: none; }
+    .ov-tick { position: absolute; top: 0; transform: translateX(-50%); font-size: 11px; color: var(--tn-muted); font-variant-numeric: tabular-nums; }
+    .ov-band { position: absolute; bottom: 0; transform: translateX(-50%); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+    .ov-band.r { color: var(--tn-red); } .ov-band.y { color: var(--tn-yellow); } .ov-band.g { color: var(--tn-green); }
+    :target.card { outline: 2px solid var(--tn-cyan); outline-offset: 3px; }
+
     /* ── COLUMNS ── */
     .columns {
       display: grid;
@@ -361,6 +412,8 @@
       .divider { display: none; }
       .bottom  { grid-template-columns: 1fr; }
       .factors { grid-template-columns: 1fr; }
+      .ov { --ov-name: 112px; }
+      .overview { padding: 14px 12px 10px; }
     }
 
     /* ── FOCUS ──
@@ -419,6 +472,11 @@
       <span style="color:var(--tn-muted)">(0-5)</span>
     </div>
   </div>
+
+  <section class="overview" aria-labelledby="ov-title">
+    <h3 id="ov-title">▚ Every protocol on one scale</h3>
+    <div id="overview" class="ov"></div>
+  </section>
 
   <div class="controls">
     <input type="search" id="search" placeholder="// filter protocols, tech, or tags…" aria-label="Filter protocols" />
@@ -865,7 +923,7 @@
       ? `<div class="card-foot ${stale ? "stale" : "fresh"}"><span class="dot"></span>reviewed ${esc(p.reviewed)}</div>`
       : "";
     return `
-      <div class="card ${g.cls}${stale ? " stale" : ""}">
+      <div class="card ${g.cls}${stale ? " stale" : ""}" id="p-${esc(p.id)}">
         <div class="card-top">
           <div class="card-left">
             <a class="card-name" href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.name)} (${esc(p.ticker)})</a>
@@ -897,6 +955,32 @@
     else if (mode === "reviewed") arr.sort((a, b) => daysSince(b.reviewed) - daysSince(a.reviewed));
     else if (mode === "name") arr.sort((a, b) => a.name.localeCompare(b.name));
     return arr;
+  }
+
+  function renderOverview() {
+    const groups = [["default", "Private by default"], ["optin", "Opt-in"]];
+    let html = "";
+    groups.forEach(([col, title]) => {
+      const items = DATA.filter((p) => p.column === col && p.score != null)
+        .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name));
+      if (!items.length) return;
+      const avg = items.reduce((t, p) => t + p.score, 0) / items.length;
+      html += `<div class="ov-group">${esc(title)}<span class="avg">avg ${avg.toFixed(1)}</span></div>`;
+      html += items.map((p) => {
+        const g = gradeOf(p.score);
+        return `<a class="ov-row" href="#p-${esc(p.id)}" aria-label="${esc(p.name)}: ${p.score} of 10, ${g.label}">` +
+          `<span class="ov-name">${esc(p.name)}</span>` +
+          `<span class="ov-scale"><span class="ov-dot" style="left:${p.score * 10}%"></span>` +
+          `<span class="ov-tip${p.score >= 8 ? " end" : ""}" style="${p.score >= 8 ? `right:${100 - p.score * 10}%` : `left:${p.score * 10}%`}">` +
+          `${p.score}/10 · ${esc(g.label)}</span></span></a>`;
+      }).join("");
+    });
+    const ticks = [0, 2, 4, 6, 8, 10].map((t) =>
+      `<span class="ov-tick" style="left:${t * 10}%">${t}</span>`).join("");
+    const bands = `<span class="ov-band r" style="left:30%">Low</span>` +
+      `<span class="ov-band y" style="left:70%">Med</span><span class="ov-band g" style="left:90%">High</span>`;
+    html += `<div class="ov-axis" aria-hidden="true"><span></span><span class="ov-scale">${ticks}${bands}</span></div>`;
+    document.getElementById("overview").innerHTML = html;
   }
 
   function render() {
@@ -938,6 +1022,7 @@
   }
   document.getElementById("search").addEventListener("input", () => { render(); saveState(); });
   document.getElementById("sort").addEventListener("change", () => { render(); saveState(); });
+  renderOverview();
   render();
   loadMetrics();
 </script>
