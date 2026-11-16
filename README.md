@@ -1,5 +1,7 @@
 # crypto-privacy-map
 
+[![Default vs Opt-In Privacy: The Truth Behind the Protocols](og-image.png)](https://atraxsrc.github.io/crypto-privacy-map/)
+
 **Default vs opt-in privacy: the truth behind the protocols.**
 
 A single-page, visual map that grades crypto privacy protocols by how much privacy
@@ -25,8 +27,40 @@ Protocols are split into two columns and scored `0-10`:
 Services that no longer operate (e.g. Samourai Whirlpool) move to an unscored
 *Offline / Historical* section: set `column: "archive"` and `score: null`.
 
-Each card carries a privacy grade, the underlying tech, key caveats, status tags
-(legal risk, adoption, etc.), and the date it was last reviewed.
+Each card carries a privacy grade with its five-factor breakdown, the underlying
+tech, key caveats, status tags (legal risk, adoption, etc.), links to the sources
+behind its claims, live measured figures where a public source exists, and the
+date it was last reviewed.
+
+Above the columns, an overview plots every scored protocol on one `0-10` axis,
+grouped default vs opt-in with each group's average. Search and sort are kept in
+the URL (`?q=zk&sort=score-desc`), so a filtered view can be shared.
+
+## Protocols covered
+
+Scores live on the page, which is the source of truth; this list only says what
+is covered and where its live figures come from.
+
+| Protocol | Column | Live metrics |
+| --- | --- | --- |
+| Monero | Private by default | Transactions per day (Coin Metrics) |
+| Zano | Private by default | - |
+| Pirate Chain | Private by default | - |
+| Beldex | Private by default | - |
+| MWC | Private by default | - |
+| Grin | Private by default | - |
+| Zcash Shielded | Opt-in | Shielded ZEC and share of supply (Zcash node via zcashexplorer.app) |
+| Railgun | Opt-in | Value in pool (DefiLlama) |
+| Tornado Cash | Opt-in | ETH in the 0.1 / 1 / 10 / 100 ETH pools and total (Ethereum JSON-RPC) |
+| Decred StakeShuffle | Opt-in | - |
+| Firo | Opt-in | - |
+| Litecoin MWEB | Opt-in | - |
+| Privacy Pools | Opt-in | Value in pool (DefiLlama) |
+| Dash CoinJoin | Opt-in | - |
+| Samourai Whirlpool | Offline / Historical | - (service seized in 2024) |
+
+A dash means no keyless public source exists yet; the reason for each is recorded
+in `UNSOURCED` in `scripts/sources/__init__.py`.
 
 ## How scores work
 
@@ -93,6 +127,16 @@ To add a protocol: add its entry to `DATA` in `index.html` with a unique `id`,
 then classify that id in `scripts/sources/__init__.py` as either a source in
 `REGISTRY` or an entry in `UNSOURCED` with a reason. `test_registry_coverage`
 fails until you do, which is deliberate.
+
+## Social preview
+
+`og-image.png` (1200x630) is the link preview shown by X, Discord, Telegram,
+Slack and others. It carries no scores or counts, so it never goes stale. Its
+source is `og-image.svg`; after editing, re-render with:
+
+```bash
+rsvg-convert -w 1200 -h 630 og-image.svg -o og-image.png
+```
 
 ## Tech
 
