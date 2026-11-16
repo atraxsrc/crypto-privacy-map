@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <!-- Source for og-image.png (social link preview, 1200x630).
+       Re-render after editing:  rsvg-convert -w 1200 -h 630 og-image.svg -o og-image.png
+       Deliberately carries no scores or counts, so it never goes stale. -->
+  <defs>
+    <radialGradient id="sky" cx="50%" cy="-15%" r="85%">
+      <stop offset="0" stop-color="#6b98ff" stop-opacity=".34"/>
+      <stop offset="1" stop-color="#6b98ff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="street" cx="50%" cy="118%" r="75%">
+      <stop offset="0" stop-color="#ff4fd8" stop-opacity=".30"/>
+      <stop offset="1" stop-color="#ff4fd8" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="haze" cx="84%" cy="48%" r="38%">
+      <stop offset="0" stop-color="#b77dff" stop-opacity=".22"/>
+      <stop offset="1" stop-color="#b77dff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="vignette" cx="50%" cy="45%" r="75%">
+      <stop offset=".45" stop-color="#000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000" stop-opacity=".6"/>
+    </radialGradient>
+    <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse">
+      <circle cx="14" cy="14" r="1.2" fill="#6b98ff" fill-opacity=".16"/>
+    </pattern>
+    <linearGradient id="rail" x1="0" x2="1">
+      <stop offset="0" stop-color="#b77dff"/>
+      <stop offset=".35" stop-color="#6b98ff"/>
+      <stop offset=".65" stop-color="#ff4fd8"/>
+      <stop offset="1" stop-color="#b77dff"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="9" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glowSoft" x="-20%" y="-50%" width="140%" height="200%">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="bloom" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+  </defs>
+
+  <!-- city-night background -->
+  <rect width="1200" height="630" fill="#0d0b1e"/>
+  <rect width="1200" height="630" fill="url(#sky)"/>
+  <rect width="1200" height="630" fill="url(#haze)"/>
+  <rect width="1200" height="630" fill="url(#street)"/>
+  <rect width="1200" height="630" fill="url(#dots)"/>
+  <rect width="1200" height="630" fill="url(#vignette)"/>
+  <rect width="1200" height="5" fill="url(#rail)" filter="url(#glowSoft)"/>
+
+  <g font-family="Fira Mono, DejaVu Sans Mono, monospace">
+    <!-- eyebrow -->
+    <text x="72" y="118" font-size="24" font-weight="700" fill="#22e3ff">~/privacy-research $</text>
+    <rect x="374" y="98" width="13" height="24" fill="#6b98ff"/>
+
+    <!-- title -->
+    <text x="72" y="208" font-size="52" font-weight="700" fill="#f4f1ff" filter="url(#glowSoft)">Default vs Opt-In Privacy:</text>
+    <text x="72" y="272" font-size="44" font-weight="700" fill="#b77dff" filter="url(#glow)">The Truth Behind the Protocols</text>
+
+    <!-- thesis -->
+    <text x="72" y="342" font-size="23" fill="#d4cfff">Crypto privacy protocols graded 0-10 on the</text>
+    <text x="72" y="374" font-size="23" fill="#d4cfff">privacy they deliver in practice, not on paper.</text>
+    <text x="72" y="418" font-size="20" fill="#a59bd6">// sourced on every card · live metrics, refreshed nightly</text>
+
+    <!-- grade legend -->
+    <g font-size="20" font-weight="700">
+      <rect x="72" y="462" width="196" height="46" rx="6" fill="#1e1740" stroke="#22e3ff" stroke-opacity=".45"/>
+      <circle cx="96" cy="485" r="7" fill="#22e3ff" filter="url(#glowSoft)"/>
+      <text x="114" y="492" fill="#22e3ff">HIGH <tspan fill="#a59bd6" font-weight="400">8-10</tspan></text>
+
+      <rect x="284" y="462" width="226" height="46" rx="6" fill="#1e1740" stroke="#ffc53d" stroke-opacity=".45"/>
+      <circle cx="308" cy="485" r="7" fill="#ffc53d" filter="url(#glowSoft)"/>
+      <text x="326" y="492" fill="#ffc53d">MEDIUM <tspan fill="#a59bd6" font-weight="400">6-7</tspan></text>
+
+      <rect x="526" y="462" width="176" height="46" rx="6" fill="#1e1740" stroke="#ff5c93" stroke-opacity=".45"/>
+      <circle cx="550" cy="485" r="7" fill="#ff5c93" filter="url(#glowSoft)"/>
+      <text x="568" y="492" fill="#ff5c93">LOW <tspan fill="#a59bd6" font-weight="400">0-5</tspan></text>
+    </g>
+
+    <!-- url -->
+    <text x="72" y="574" font-size="20" fill="#6b98ff">atraxsrc.github.io/crypto-privacy-map</text>
+  </g>
+
+  <!-- neon padlock -->
+  <g transform="translate(1000 330)">
+    <circle r="120" fill="#22e3ff" fill-opacity=".16" filter="url(#bloom)"/>
+    <path d="M-52 -18 v-46 a52 52 0 0 1 104 0 v46" fill="none" stroke="#22e3ff" stroke-width="18" stroke-linecap="round" filter="url(#glow)"/>
+    <rect x="-82" y="-22" width="164" height="132" rx="18" fill="#1e1740" stroke="#22e3ff" stroke-width="7" filter="url(#glow)"/>
+    <circle cx="0" cy="30" r="15" fill="#ff4fd8" filter="url(#glowSoft)"/>
+    <rect x="-6" y="34" width="12" height="40" rx="5" fill="#ff4fd8" filter="url(#glowSoft)"/>
+  </g>
+</svg>
