@@ -1,8 +1,8 @@
 # crypto-privacy-map
 
-[![Default vs Opt-In Privacy: The Truth Behind the Protocols](og-image.png)](https://atraxsrc.github.io/crypto-privacy-map/)
+[![Default vs Opt-In Privacy: Ghost in the Ledger - Monero XMR is King](og-image.png)](https://atraxsrc.github.io/crypto-privacy-map/)
 
-**Default vs opt-in privacy: the truth behind the protocols.**
+**Default vs opt-in privacy: ghost in the ledger - Monero XMR is king.**
 
 A single-page, visual map that grades crypto privacy protocols by how much privacy
 they actually deliver - not by marketing. The core thesis: **privacy that is on by

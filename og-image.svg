@@ -57,7 +57,7 @@
 
     <!-- title -->
     <text x="72" y="208" font-size="52" font-weight="700" fill="#f4f1ff" filter="url(#glowSoft)">Default vs Opt-In Privacy:</text>
-    <text x="72" y="272" font-size="44" font-weight="700" fill="#b77dff" filter="url(#glow)">The Truth Behind the Protocols</text>
+    <text x="72" y="268" font-size="34" font-weight="700" fill="#b77dff" filter="url(#glow)">Ghost in the Ledger <tspan fill="#ff4fd8">- Monero XMR is King</tspan></text>
 
     <!-- thesis -->
     <text x="72" y="342" font-size="23" fill="#d4cfff">Crypto privacy protocols graded 0-10 on the</text>
