@@ -22,6 +22,9 @@ Protocols are split into two columns and scored `0-10`:
 | 🔒 **Private by default** | Every transaction is private with no user action (e.g. Monero). |
 | ⚠️ **Opt-in privacy** | The user must choose privacy; most transactions stay public (e.g. Zcash shielded, mixers). |
 
+Services that no longer operate (e.g. Samourai Whirlpool) move to an unscored
+*Offline / Historical* section: set `column: "archive"` and `score: null`.
+
 Each card carries a privacy grade, the underlying tech, key caveats, status tags
 (legal risk, adoption, etc.), and the date it was last reviewed.
 

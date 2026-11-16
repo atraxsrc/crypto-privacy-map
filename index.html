@@ -131,6 +131,12 @@
     .section-header h2 { font-size: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; }
     .section-header.left  h2 { color: var(--tn-green);  text-shadow: 0 0 24px rgba(158,206,106,.70); }
     .section-header.right h2 { color: var(--tn-yellow); text-shadow: 0 0 24px rgba(224,175,104,.60); }
+    .sh-badge.r { background: rgba(247,118,142,.12); color: var(--tn-red); border: 1px solid rgba(247,118,142,.3); }
+    .archive { margin-top: 36px; border-top: 1px solid var(--tn-border); padding-top: 28px; }
+    .archive h2 { color: var(--tn-muted); }
+    .archive-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr)); gap: 0 36px; }
+    .grade-archived { border-left: 3px solid var(--tn-comment); }
+    .grade-archived .card-name { color: var(--tn-fg); }
     .section-header .desc { font-size: 12px; color: var(--tn-muted); margin-top: 4px; }
 
     /* ── CONTROLS ── */
@@ -447,6 +453,15 @@
 
   </div>
 
+  <section class="archive" id="archive-section">
+    <div class="section-header">
+      <span class="sh-badge r">Defunct</span>
+      <h2>Offline / Historical</h2>
+      <p class="desc">Services that no longer operate. Listed for the record, not scored.</p>
+    </div>
+    <div id="col-archive" class="archive-grid"></div>
+  </section>
+
   <section class="methodology">
     <h3>▚ How the scores work</h3>
     <p class="lead">
@@ -505,8 +520,10 @@
     <div class="panel panel-verdict">
       <h3>◆ The Verdict</h3>
       <p>
-        Default privacy &gt; Opt-in privacy. Always.<br>
+        Default privacy &gt; Opt-in privacy, as a rule.<br>
         If you have to choose privacy, most people won't.<br>
+        The exception: strong cryptography with a large shielded pool (Zcash) can match a
+        small default-private network. Scale still matters.<br>
         <strong>Monero remains the only protocol with real mass privacy.</strong>
       </p>
     </div>
@@ -542,7 +559,8 @@
    *  To update the map, edit DATA below. Everything renders from it.
    *  - score (0-10) drives the grade colour & bar automatically
    *      8-10 → high (green) · 6-7 → medium (yellow) · 0-5 → low (red)
-   *  - column: "default" (private by default) or "optin"
+   *  - column: "default" (private by default), "optin", or "archive"
+   *      (defunct services: listed for the record, never scored, score: null)
    *  - tags[].type: "ok" | "warn" | "info"
    *  Bump LAST_REVIEWED whenever you verify/refresh the data.
    * ────────────────────────────────────────────────────────────── */
@@ -612,7 +630,7 @@
       id: "zcash-shielded",
       column: "optin", name: "Zcash Shielded", ticker: "ZEC", url: "https://z.cash",
       reviewed: "2026-11-17",
-      tech: "zk-SNARKs · Sapling / Orchard pools", score: 8,
+      tech: "zk-SNARKs · Sapling / Orchard pools", score: 7,
       body: [
         "zk-SNARK shielded pools hide sender, receiver and amount.",
         "About 29% of ZEC sat in shielded pools at the end of Q3 2026; the rest is transparent.",
@@ -659,9 +677,9 @@
     },
     {
       id: "samourai-whirlpool",
-      column: "optin", name: "Samourai Whirlpool", ticker: "BTC", url: "https://www.justice.gov/usao-sdny/pr/founders-samourai-wallet-cryptocurrency-mixing-service-sentenced-five-and-four-years",
+      column: "archive", name: "Samourai Whirlpool", ticker: "BTC", url: "https://www.justice.gov/usao-sdny/pr/founders-samourai-wallet-cryptocurrency-mixing-service-sentenced-five-and-four-years",
       reviewed: "2026-11-17",
-      tech: "CoinJoin · Equal-output mixing", score: 5,
+      tech: "CoinJoin · Equal-output mixing", score: null,
       body: [
         "Equal-output CoinJoin mixing for Bitcoin.",
         "Coordinator and domain seized in April 2024; the service is offline.",
@@ -676,7 +694,7 @@
       id: "decred-cspp",
       column: "optin", name: "Decred StakeShuffle", ticker: "DCR", url: "https://decred.org",
       reviewed: "2026-11-17",
-      tech: "CoinShuffle++ · Peer-to-peer mixing", score: 5,
+      tech: "CoinShuffle++ · Peer-to-peer mixing", score: 6,
       body: [
         "CoinShuffle++ mixing, run peer-to-peer with no central server since dcrd v2.0.",
         "Heavily used for staking: 45.6M DCR mixed by late 2021, about 3.7x supply.",
@@ -709,6 +727,7 @@
 
   /* ── derive grade + label from score ── */
   function gradeOf(score) {
+    if (score == null) return { cls: "grade-archived", label: "Defunct" };
     if (score >= 8) return { cls: "grade-high", label: "High" };
     if (score >= 6) return { cls: "grade-mid", label: "Medium" };
     return { cls: "grade-low", label: "Low" };
@@ -830,9 +849,9 @@
             <a class="card-name" href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.name)} (${esc(p.ticker)})</a>
             <span class="card-tech">${esc(p.tech)}</span>
           </div>
-          <div class="score-pill"><span class="score-num">${p.score}/10</span><span class="score-grade">${g.label}</span></div>
+          ${p.score == null ? "" : `<div class="score-pill"><span class="score-num">${p.score}/10</span><span class="score-grade">${g.label}</span></div>`}
         </div>
-        <div class="bar-track"><div class="bar-fill" style="width:${p.score * 10}%"></div></div>
+        ${p.score == null ? "" : `<div class="bar-track"><div class="bar-fill" style="width:${p.score * 10}%"></div></div>`}
         <ul class="card-body">${bullets}</ul>
         ${tags}
         ${metricsHTML(metricFor(p.id))}
@@ -850,8 +869,9 @@
 
   function sortItems(items, mode) {
     const arr = items.slice();
-    if (mode === "score-desc") arr.sort((a, b) => b.score - a.score);
-    else if (mode === "score-asc") arr.sort((a, b) => a.score - b.score);
+    const sc = (p) => (p.score == null ? -1 : p.score);
+    if (mode === "score-desc") arr.sort((a, b) => sc(b) - sc(a));
+    else if (mode === "score-asc") arr.sort((a, b) => sc(a) - sc(b));
     else if (mode === "reviewed") arr.sort((a, b) => daysSince(b.reviewed) - daysSince(a.reviewed));
     else if (mode === "name") arr.sort((a, b) => a.name.localeCompare(b.name));
     return arr;
@@ -867,6 +887,9 @@
       document.getElementById(listId).innerHTML = items.map(cardHTML).join("");
       document.getElementById(emptyId).hidden = items.length !== 0;
     });
+    const archived = sortItems(DATA.filter((p) => p.column === "archive" && matches(p, q)), mode);
+    document.getElementById("col-archive").innerHTML = archived.map(cardHTML).join("");
+    document.getElementById("archive-section").hidden = archived.length === 0;
   }
 
   document.getElementById("last-reviewed").textContent = LAST_REVIEWED;
