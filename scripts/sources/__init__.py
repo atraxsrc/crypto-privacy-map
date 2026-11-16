@@ -22,5 +22,5 @@ UNSOURCED = {
     "zcash-shielded": "no keyless endpoint exposes shielded pool value; Blockchair's Zcash stats carry no shielded fields and the Coin Metrics community tier has no shielded metrics for ZEC",
     "samourai-whirlpool": "coordinator seized in 2024; no live public statistics",
     "decred-cspp": "mixing participation is not exposed by a keyless endpoint",
-    "dash-privatesend": "PrivateSend usage is not exposed by a keyless endpoint",
+    "dash-privatesend": "CoinJoin (formerly PrivateSend) usage is not exposed by a keyless endpoint",
 }

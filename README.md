@@ -15,7 +15,7 @@ most of them will, and a small anonymity set protects no one.
 
 ## What it shows
 
-Protocols are split into two columns and scored `0–10`:
+Protocols are split into two columns and scored `0-10`:
 
 | Column | Meaning |
 | --- | --- |
@@ -36,7 +36,7 @@ privacy, weighing five factors:
 4. **Real adoption** - what share of transactions are actually private.
 5. **Maturity & standing** - battle-testing, audits, and legal/operational health.
 
-Grade bands: **8–10 High** · **6–7 Medium** · **4–5 Low**. The full breakdown lives in
+Grade bands: **8-10 High** · **6-7 Medium** · **0-5 Low**. The full breakdown lives in
 the *How the scores work* section on the page.
 
 ## Staying current

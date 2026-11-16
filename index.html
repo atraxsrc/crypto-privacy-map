@@ -96,7 +96,8 @@
     }
     header h1 .accent { color: var(--tn-purple); text-shadow: 0 0 28px rgba(187,154,247,.85), 0 0 10px rgba(187,154,247,.55); }
     header .sub { margin-top: 10px; font-size: 12px; color: var(--tn-muted); }
-    header .sub span { color: var(--tn-cyan); }
+    header .sub a { color: var(--tn-cyan); text-decoration: none; }
+    header .sub a:hover { text-decoration: underline; }
 
     /* ── LEGEND ── */
     .legend {
@@ -246,6 +247,10 @@
     .tag-info { background: rgba(187,154,247,.1); color: var(--tn-purple); border: 1px solid rgba(187,154,247,.2);  }
     .tag-stale { background: rgba(86,95,137,.12); color: var(--tn-muted); border: 1px solid rgba(86,95,137,.4); }
 
+    .card-sources { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin-top: 9px; font-size: 11px; }
+    .card-sources .src-lbl { color: var(--tn-muted); }
+    .card-sources a { color: var(--tn-blue); text-decoration: none; }
+    .card-sources a:hover { text-decoration: underline; }
     .card.stale { border-style: dashed; }
     .card-foot { display: flex; align-items: center; gap: 6px; margin-top: 9px; font-size: 11px; color: var(--tn-muted); }
     .card-foot .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--tn-comment); flex-shrink: 0; }
@@ -378,7 +383,7 @@
       <span class="cursor"></span>
     </div>
     <h1>Default vs Opt-In Privacy:<br><span class="accent">The Truth Behind the Protocols</span></h1>
-    <p class="sub">// Why privacy type matters more than you think &nbsp;·&nbsp; <span>Source: cryptoprivacy.live</span></p>
+    <p class="sub">// Why privacy type matters more than you think &nbsp;·&nbsp; Default / opt-in split follows <a href="https://cryptoprivacy.live" target="_blank" rel="noopener">cryptoprivacy.live</a>; scores are our own</p>
   </header>
 
   <div class="legend">
@@ -386,17 +391,17 @@
     <div class="legend-item">
       <div class="ldot" style="background:var(--tn-green)"></div>
       <span style="color:var(--tn-green)">HIGH</span>
-      <span style="color:var(--tn-muted)">(8–10)</span>
+      <span style="color:var(--tn-muted)">(8-10)</span>
     </div>
     <div class="legend-item">
       <div class="ldot" style="background:var(--tn-yellow)"></div>
       <span style="color:var(--tn-yellow)">MEDIUM</span>
-      <span style="color:var(--tn-muted)">(6–7)</span>
+      <span style="color:var(--tn-muted)">(6-7)</span>
     </div>
     <div class="legend-item">
       <div class="ldot" style="background:var(--tn-red)"></div>
       <span style="color:var(--tn-red)">LOW</span>
-      <span style="color:var(--tn-muted)">(4–5)</span>
+      <span style="color:var(--tn-muted)">(0-5)</span>
     </div>
   </div>
 
@@ -445,10 +450,10 @@
   <section class="methodology">
     <h3>▚ How the scores work</h3>
     <p class="lead">
-      Scores are an <strong>opinionated synthesis</strong>, not a precise metric — they rank how much
+      Scores are an <strong>opinionated synthesis</strong>, not a precise metric - they rank how much
       real privacy a protocol delivers <em>in practice</em>, not just on paper. A perfect cipher with
       nobody using it scores lower than solid cryptography that everyone uses by default. Each protocol
-      is weighed on the five factors below, then mapped to a <code>0–10</code> grade.
+      is weighed on the five factors below, then mapped to a <code>0-10</code> grade.
     </p>
 
     <div class="factors">
@@ -462,7 +467,7 @@
       </div>
       <div class="factor">
         <h4><span class="fnum">03</span> Cryptographic strength</h4>
-        <p>The underlying tech — ring signatures, zk-SNARKs, MimbleWimble, CoinJoin — and how well it resists chain analysis and known attacks.</p>
+        <p>The underlying tech - ring signatures, zk-SNARKs, MimbleWimble, CoinJoin - and how well it resists chain analysis and known attacks.</p>
       </div>
       <div class="factor">
         <h4><span class="fnum">04</span> Real adoption</h4>
@@ -476,15 +481,15 @@
 
     <div class="bands">
       <div class="band g">
-        <span class="range">8–10</span>
+        <span class="range">8-10</span>
         <div><div class="blabel">High</div><div class="bdesc">Strong crypto + a large, real anonymity set.</div></div>
       </div>
       <div class="band y">
-        <span class="range">6–7</span>
+        <span class="range">6-7</span>
         <div><div class="blabel">Medium</div><div class="bdesc">Sound approach held back by scale, adoption, or UX.</div></div>
       </div>
       <div class="band r">
-        <span class="range">4–5</span>
+        <span class="range">0-5</span>
         <div><div class="blabel">Low</div><div class="bdesc">Weak guarantees, tiny pools, or legal/operational risk.</div></div>
       </div>
     </div>
@@ -508,8 +513,10 @@
     <div class="panel panel-legal">
       <h3>⚠ Legal Warning</h3>
       <p>
-        3 of top 10 privacy projects have founders arrested or sanctioned.<br>
-        <strong>Using these tools carries increasing legal risk in the U.S.</strong><br>
+        Tornado Cash's Roman Storm was convicted on one count in 2025 and faces retrial in 2027.
+        Samourai's founders were sentenced in 2025. Alexey Pertsev's Dutch conviction is on appeal.
+        From July 2027 the EU bars regulated providers from handling privacy coins.<br>
+        <strong>Building or running these tools carries real legal risk in the U.S. and EU.</strong><br>
         Not financial or legal advice.
       </p>
     </div>
@@ -533,39 +540,49 @@
   /* ──────────────────────────────────────────────────────────────
    *  SINGLE SOURCE OF TRUTH
    *  To update the map, edit DATA below. Everything renders from it.
-   *  - score (0–10) drives the grade colour & bar automatically
-   *      8–10 → high (green) · 6–7 → medium (yellow) · 4–5 → low (red)
+   *  - score (0-10) drives the grade colour & bar automatically
+   *      8-10 → high (green) · 6-7 → medium (yellow) · 0-5 → low (red)
    *  - column: "default" (private by default) or "optin"
    *  - tags[].type: "ok" | "warn" | "info"
    *  Bump LAST_REVIEWED whenever you verify/refresh the data.
    * ────────────────────────────────────────────────────────────── */
-  const LAST_REVIEWED = "2026-06-13";
+  const LAST_REVIEWED = "2026-11-17";
   const STALE_AFTER_DAYS = 180; // a card unreviewed for this long is flagged "review due"
 
   const DATA = [
     {
       id: "monero",
       column: "default", name: "Monero", ticker: "XMR", url: "https://www.getmonero.org",
-      reviewed: "2026-06-13",
+      reviewed: "2026-11-17",
       tech: "Ring signatures · Stealth addresses · RingCT", score: 10,
       body: [
-        "Largest anonymity set. Gold standard of privacy.",
-        "Delisted from many exchanges — proves it works.",
-        "Every TX private by default, no opt-in required."
+        "Every transaction is private by default: hidden sender, receiver and amount.",
+        "Each input hides among 16 ring members; decoy analysis is the main known weakness.",
+        "FCMP++ (full-chain membership proofs) reached stressnet Oct 2026; no mainnet date yet.",
+        "Sept 2025: Qubic-linked selfish mining forced an 18-block reorg, the deepest on record."
       ],
-      tags: [{ type: "ok", label: "Battle-Tested" }, { type: "ok", label: "Gold Standard" }]
+      tags: [{ type: "ok", label: "Battle-Tested" }, { type: "warn", label: "Exchange Delistings" }],
+      sources: [
+        { label: "18-block reorg", url: "https://decrypt.co/339424/moneros-largest-reorg-erases-36-minutes-transaction-history" },
+        { label: "FCMP++ stressnet", url: "https://cryptoticker.io/en/monero-fcmp-stressnet-fork-october-2026/" },
+        { label: "Kraken EU delisting", url: "https://www.theblock.co/post/287801" }
+      ]
     },
     {
       id: "zano",
       column: "default", name: "Zano", ticker: "ZANO", url: "https://zano.org",
-      reviewed: "2026-06-13",
-      tech: "Ring signatures · Confidential assets", score: 7,
+      reviewed: "2026-11-17",
+      tech: "Ring signatures · Zarcanum PoS · Confidential assets", score: 7,
       body: [
-        "Confidential assets with ring signatures.",
-        "Supports private smart contracts.",
+        "Ring signatures and hidden amounts, including for staking (Zarcanum).",
+        "Hosts hundreds of confidential assets that inherit the same privacy.",
         "Growing but still small anonymity set."
       ],
-      tags: [{ type: "info", label: "Smart Contracts" }]
+      tags: [{ type: "info", label: "Confidential Assets" }],
+      sources: [
+        { label: "Zarcanum", url: "https://blog.zano.org/introducing-zarcanum" },
+        { label: "Lite wallet, May 2026", url: "https://news.bitcoin.com/zano-ships-desktop-lite-wallet-beta-connecting-users-to-remote-nodes-instantly/" }
+      ]
     },
     {
       id: "beldex",
@@ -594,74 +611,99 @@
     {
       id: "zcash-shielded",
       column: "optin", name: "Zcash Shielded", ticker: "ZEC", url: "https://z.cash",
-      reviewed: "2026-06-13",
+      reviewed: "2026-11-17",
       tech: "zk-SNARKs · Sapling / Orchard pools", score: 8,
       body: [
-        "zk-SNARKs are very strong cryptography.",
-        "But a minority of TXs use the shielded pool.",
-        "Smaller shielded set weakens anonymity."
+        "zk-SNARK shielded pools hide sender, receiver and amount.",
+        "About 29% of ZEC sat in shielded pools at the end of Q3 2026; the rest is transparent.",
+        "June 2026: a critical Orchard bug (live since 2022) allowed undetectable counterfeiting. Patched; past exploitation cannot be ruled out."
       ],
-      tags: [{ type: "warn", label: "Opt-In Adoption" }, { type: "ok", label: "Strong Crypto" }]
+      tags: [{ type: "warn", label: "Opt-In Adoption" }, { type: "ok", label: "Strong Crypto" }, { type: "warn", label: "Orchard Bug 2026" }],
+      sources: [
+        { label: "Shielded share Q3 2026", url: "https://app.blockworks.com/report/zcash-token-holder-report-q3-2026" },
+        { label: "Orchard disclosure", url: "https://decrypt.co/370105/zec-crashes-38-as-zcash-discloses-critical-counterfeiting-vulnerability" }
+      ]
     },
     {
       id: "railgun",
-      column: "optin", name: "Railgun", ticker: "ETH", url: "https://railgun.org",
-      reviewed: "2026-01-15",
-      tech: "zk-SNARKs · DeFi privacy layer", score: 7,
+      column: "optin", name: "Railgun", ticker: "RAIL", url: "https://railgun.org",
+      reviewed: "2026-11-17",
+      tech: "zk-SNARKs · EVM privacy system", score: 7,
       body: [
-        "zk-SNARKs for DeFi privacy.",
-        "Supports private swaps and transfers.",
-        "Compliance features available."
+        "zk-SNARK shielded balances for EVM tokens, with private swaps and DeFi calls.",
+        "Private Proofs of Innocence screen deposits against lists of flagged funds.",
+        "Opt-in: privacy depends on how many others shield the same tokens."
       ],
-      tags: [{ type: "info", label: "DeFi Native" }, { type: "ok", label: "Compliance Ready" }]
+      tags: [{ type: "info", label: "DeFi Native" }, { type: "info", label: "Deposit Screening" }],
+      sources: [
+        { label: "Private Proofs of Innocence", url: "https://blockworks.co/news/defi-privacy-zero-knowledge-proofs" }
+      ]
     },
     {
       id: "tornado-cash",
-      column: "optin", name: "Tornado Cash", ticker: "ETH", url: "https://tornado.ws",
-      reviewed: "2026-06-13",
+      column: "optin", name: "Tornado Cash", ticker: "TORN", url: "https://l2beat.com/privacy/projects/tornado-cash",
+      reviewed: "2026-11-17",
       tech: "zk-SNARK mixer · ETH / ERC-20", score: 7,
       body: [
-        "zk-SNARK mixer for ETH/tokens.",
-        "OFAC sanctions delisted in 2025 — status evolving.",
-        "Developer Roman Storm case set legal precedent."
+        "Fixed-denomination zk-SNARK pools for ETH and ERC-20 tokens.",
+        "OFAC removed its sanctions in March 2025 after losing in court.",
+        "Roman Storm convicted on one count in 2025; retrial on the rest set for April 2027.",
+        "Hosted frontends have shipped backdoors; use an audited IPFS build."
       ],
-      tags: [{ type: "warn", label: "Legal Risk" }]
+      tags: [{ type: "warn", label: "Legal Risk" }],
+      sources: [
+        { label: "OFAC delisting", url: "https://www.theblock.co/post/347519/treasury-department-removes-economic-sanctions-against-crypto-mixer-tornado-cash" },
+        { label: "Storm retrial", url: "https://theblock.co/news/regulation/2026-08-26-tornado-cash-roman-storm-retrial-april-2027-412761" },
+        { label: "Frontend backdoor", url: "https://forklog.com/en/backdoor-discovered-in-ipfs-version-of-tornado-cash/" }
+      ]
     },
     {
       id: "samourai-whirlpool",
-      column: "optin", name: "Samourai Whirlpool", ticker: "BTC", url: "https://samouraiwallet.com",
-      reviewed: "2025-08-01",
+      column: "optin", name: "Samourai Whirlpool", ticker: "BTC", url: "https://www.justice.gov/usao-sdny/pr/founders-samourai-wallet-cryptocurrency-mixing-service-sentenced-five-and-four-years",
+      reviewed: "2026-11-17",
       tech: "CoinJoin · Equal-output mixing", score: 5,
       body: [
-        "CoinJoin equal-output mixing.",
-        "Founders arrested April 2024.",
-        "Service disrupted, uncertain future."
+        "Equal-output CoinJoin mixing for Bitcoin.",
+        "Coordinator and domain seized in April 2024; the service is offline.",
+        "Founders pleaded guilty and were sentenced in Nov 2025 to 5 and 4 years."
       ],
-      tags: [{ type: "warn", label: "Founders Arrested" }, { type: "warn", label: "Disrupted" }]
+      tags: [{ type: "warn", label: "Defunct" }, { type: "warn", label: "Founders Sentenced" }],
+      sources: [
+        { label: "DOJ sentencing", url: "https://www.justice.gov/usao-sdny/pr/founders-samourai-wallet-cryptocurrency-mixing-service-sentenced-five-and-four-years" }
+      ]
     },
     {
       id: "decred-cspp",
-      column: "optin", name: "Decred CSPP", ticker: "DCR", url: "https://decred.org",
-      reviewed: "2025-05-01",
-      tech: "CoinShuffle++ · StakeShuffle", score: 5,
+      column: "optin", name: "Decred StakeShuffle", ticker: "DCR", url: "https://decred.org",
+      reviewed: "2026-11-17",
+      tech: "CoinShuffle++ · Peer-to-peer mixing", score: 5,
       body: [
-        "CoinShuffle++ protocol.",
-        "Small mixing pool limits effectiveness.",
-        "Low adoption weakens anonymity set."
+        "CoinShuffle++ mixing, run peer-to-peer with no central server since dcrd v2.0.",
+        "Heavily used for staking: 45.6M DCR mixed by late 2021, about 3.7x supply.",
+        "Still opt-in: unmixed coins stay fully transparent."
       ],
-      tags: []
+      tags: [],
+      sources: [
+        { label: "dcrd v2.0.0", url: "https://github.com/decred/dcrd/releases/tag/release-v2.0.0" },
+        { label: "Mixing volume", url: "https://ournetwork.substack.com/p/our-network-issue-50-part-2" }
+      ]
     },
     {
       id: "dash-privatesend",
-      column: "optin", name: "Dash PrivateSend", ticker: "DASH", url: "https://www.dash.org",
-      reviewed: "2025-03-01",
-      tech: "CoinJoin variant · Masternode mixing", score: 4,
+      column: "optin", name: "Dash CoinJoin", ticker: "DASH", url: "https://www.dash.org",
+      reviewed: "2026-11-17",
+      tech: "CoinJoin (formerly PrivateSend) · Masternode mixing", score: 4,
       body: [
-        "Basic CoinJoin variant.",
-        "Masternode model raises concerns.",
-        "Very low privacy adoption rate."
+        "Basic CoinJoin variant, coordinated by masternodes.",
+        "One estimate put CoinJoin at about 0.2% of Dash transactions.",
+        "Dash's own team says it should not be considered a privacy coin."
       ],
-      tags: [{ type: "warn", label: "Very Low Adoption" }]
+      tags: [{ type: "warn", label: "Very Low Adoption" }],
+      sources: [
+        { label: "Usage estimate", url: "https://decrypt.co/47974/darkcoin-to-dash-the-5-year-fight-to-rebrand-a-privacy-coin" },
+        { label: "Dash team statement", url: "https://cointelegraph.com/news/dash-should-not-be-considered-a-privacy-coin-dash-team-says" },
+        { label: "Dash docs", url: "https://docs.dash.org/en/stable/docs/user/wallets/dashcore/coinjoin-instantsend.html" }
+      ]
     }
   ];
 
@@ -761,6 +803,13 @@
       .catch((e) => console.warn("[privacy-map] metrics unavailable:", e.message));
   }
 
+  function sourcesHTML(list) {
+    if (!list || !list.length) return "";
+    const links = list.map((s, i) =>
+      `<a href="${esc(s.url)}" target="_blank" rel="noopener">[${i + 1}] ${esc(s.label)}</a>`).join("");
+    return `<div class="card-sources"><span class="src-lbl">sources</span>${links}</div>`;
+  }
+
   function cardHTML(p) {
     const g = gradeOf(p.score);
     const stale = isStale(p);
@@ -787,6 +836,7 @@
         <ul class="card-body">${bullets}</ul>
         ${tags}
         ${metricsHTML(metricFor(p.id))}
+        ${sourcesHTML(p.sources)}
         ${reviewed}
       </div>`;
   }
