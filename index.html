@@ -300,6 +300,11 @@
     .grade-mid  .bar-fill { background: linear-gradient(90deg, rgba(224,175,104,.28), var(--tn-yellow)); box-shadow: 0 0 14px rgba(224,175,104,.8), 0 0 26px rgba(224,175,104,.35); }
     .grade-low  .bar-fill { background: linear-gradient(90deg, rgba(247,118,142,.28), var(--tn-red));    box-shadow: 0 0 14px rgba(247,118,142,.55), 0 0 26px rgba(247,118,142,.2); }
 
+    .fmini { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: -2px 0 10px; }
+    .fm { display: inline-flex; align-items: center; gap: 3px; }
+    .fm-lbl { font-size: 11px; color: var(--tn-muted); margin-right: 2px; letter-spacing: .5px; }
+    .pip { width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid var(--tn-muted); }
+    .pip.on { background: var(--tn-fg-bright); border-color: var(--tn-fg-bright); }
     .card-body { font-size: 12.5px; color: var(--tn-fg); line-height: 1.75; }
     .card-body li { list-style: none; padding-left: 16px; position: relative; }
     .card-body li::before { content: '//'; position: absolute; left: 0; font-size: 10px; color: var(--tn-comment); opacity: .5; }
@@ -535,28 +540,29 @@
       Scores are an <strong>opinionated synthesis</strong>, not a precise metric - they rank how much
       real privacy a protocol delivers <em>in practice</em>, not just on paper. A perfect cipher with
       nobody using it scores lower than solid cryptography that everyone uses by default. Each protocol
-      is weighed on the five factors below, then mapped to a <code>0-10</code> grade.
+      gets <code>0-2</code> on each of the five factors below; the score is their sum, and every card
+      shows its breakdown.
     </p>
 
     <div class="factors">
       <div class="factor">
-        <h4><span class="fnum">01</span> Default vs opt-in</h4>
-        <p>Privacy that's always on beats privacy you have to choose. Opt-in models leak metadata and shrink the crowd you hide in. This is the single biggest factor.</p>
+        <h4><span class="fnum">01 · DEF</span> Default vs opt-in</h4>
+        <p>Privacy that's always on beats privacy you have to choose. Opt-in models leak metadata and shrink the crowd you hide in, so they score 0 here by definition.</p>
       </div>
       <div class="factor">
-        <h4><span class="fnum">02</span> Anonymity set</h4>
+        <h4><span class="fnum">02 · ANON</span> Anonymity set</h4>
         <p>How large is the crowd you blend into? More private transactions sharing the same pool means stronger deniability for each one.</p>
       </div>
       <div class="factor">
-        <h4><span class="fnum">03</span> Cryptographic strength</h4>
+        <h4><span class="fnum">03 · CRYPTO</span> Cryptographic strength</h4>
         <p>The underlying tech - ring signatures, zk-SNARKs, MimbleWimble, CoinJoin - and how well it resists chain analysis and known attacks.</p>
       </div>
       <div class="factor">
-        <h4><span class="fnum">04</span> Real adoption</h4>
-        <p>What share of transactions are actually private? Strong crypto with low shielded-pool usage delivers weak real-world privacy.</p>
+        <h4><span class="fnum">04 · USAGE</span> Usage scale</h4>
+        <p>How much real use the privacy feature gets: transactions, value shielded, active users. Measured on its own scale so default-private coins don't collect it for free.</p>
       </div>
       <div class="factor">
-        <h4><span class="fnum">05</span> Maturity &amp; standing</h4>
+        <h4><span class="fnum">05 · MATURE</span> Maturity &amp; standing</h4>
         <p>Years battle-tested, audits, and operational health. Sanctions, arrests, or a disrupted service drag usability and effective privacy down.</p>
       </div>
     </div>
@@ -579,7 +585,7 @@
       Live figures are measured nightly from public, key-free sources and are shown
       only where such a source exists; many privacy protocols publish no usable
       endpoint, so their cards carry no measured figures. Measured values never
-      change a score - scores stay hand-set.
+      change a score - factor judgments stay hand-set.
     </p>
   </section>
 
@@ -624,10 +630,12 @@
   /* ──────────────────────────────────────────────────────────────
    *  SINGLE SOURCE OF TRUTH
    *  To update the map, edit DATA below. Everything renders from it.
-   *  - score (0-10) drives the grade colour & bar automatically
+   *  - factors: five 0-2 judgments, in FACTORS order (def, anon, crypto,
+   *      usage, mature). The score is their sum, computed below; never set
+   *      a score by hand, or it can drift from the breakdown shown on the card.
    *      8-10 → high (green) · 6-7 → medium (yellow) · 0-5 → low (red)
    *  - column: "default" (private by default), "optin", or "archive"
-   *      (defunct services: listed for the record, never scored, score: null)
+   *      (defunct services: listed for the record, unscored, score: null)
    *  - tags[].type: "ok" | "warn" | "info"
    *  Bump LAST_REVIEWED whenever you verify/refresh the data.
    * ────────────────────────────────────────────────────────────── */
@@ -639,7 +647,7 @@
       id: "monero",
       column: "default", name: "Monero", ticker: "XMR", url: "https://www.getmonero.org",
       reviewed: "2026-11-17",
-      tech: "Ring signatures · Stealth addresses · RingCT", score: 10,
+      tech: "Ring signatures · Stealth addresses · RingCT", factors: [2, 2, 2, 2, 2],
       body: [
         "Every transaction is private by default: hidden sender, receiver and amount.",
         "Each input hides among 16 ring members; decoy analysis is the main known weakness.",
@@ -657,7 +665,7 @@
       id: "zano",
       column: "default", name: "Zano", ticker: "ZANO", url: "https://zano.org",
       reviewed: "2026-11-17",
-      tech: "Ring signatures · Zarcanum PoS · Confidential assets", score: 7,
+      tech: "Ring signatures · Zarcanum PoS · Confidential assets", factors: [2, 1, 2, 1, 1],
       body: [
         "Ring signatures and hidden amounts, including for staking (Zarcanum).",
         "Hosts hundreds of confidential assets that inherit the same privacy.",
@@ -673,7 +681,7 @@
       id: "beldex",
       column: "default", name: "Beldex", ticker: "BDX", url: "https://www.beldex.io",
       reviewed: "2026-11-17",
-      tech: "Monero fork · Ring signatures · RingCT", score: 6,
+      tech: "Monero fork · Ring signatures · RingCT", factors: [2, 1, 1, 1, 1],
       body: [
         "Monero-derived: ring signatures, stealth addresses and RingCT on every transaction.",
         "Ring size 11 (Monero uses 16) on a far smaller network.",
@@ -689,7 +697,7 @@
       id: "mwc",
       column: "default", name: "MWC", ticker: "MWC", url: "https://www.mwc.mw",
       reviewed: "2026-11-17",
-      tech: "MimbleWimble · No addresses on-chain", score: 6,
+      tech: "MimbleWimble · No addresses on-chain", factors: [2, 1, 1, 1, 1],
       body: [
         "MimbleWimble: no addresses or amounts stored on-chain.",
         "Still interactive: sender and receiver swap Slatepack messages to transact.",
@@ -706,7 +714,7 @@
       id: "zcash-shielded",
       column: "optin", name: "Zcash Shielded", ticker: "ZEC", url: "https://z.cash",
       reviewed: "2026-11-17",
-      tech: "zk-SNARKs · Sapling / Orchard pools", score: 7,
+      tech: "zk-SNARKs · Sapling / Orchard pools", factors: [0, 2, 2, 2, 1],
       body: [
         "zk-SNARK shielded pools hide sender, receiver and amount.",
         "About 29% of ZEC sat in shielded pools at the end of Q3 2026; the rest is transparent.",
@@ -722,7 +730,7 @@
       id: "railgun",
       column: "optin", name: "Railgun", ticker: "RAIL", url: "https://railgun.org",
       reviewed: "2026-11-17",
-      tech: "zk-SNARKs · EVM privacy system", score: 7,
+      tech: "zk-SNARKs · EVM privacy system", factors: [0, 1, 2, 1, 2],
       body: [
         "zk-SNARK shielded balances for EVM tokens, with private swaps and DeFi calls.",
         "Private Proofs of Innocence screen deposits against lists of flagged funds.",
@@ -737,7 +745,7 @@
       id: "tornado-cash",
       column: "optin", name: "Tornado Cash", ticker: "TORN", url: "https://l2beat.com/privacy/projects/tornado-cash",
       reviewed: "2026-11-17",
-      tech: "zk-SNARK mixer · ETH / ERC-20", score: 7,
+      tech: "zk-SNARK mixer · ETH / ERC-20", factors: [0, 2, 2, 1, 1],
       body: [
         "Fixed-denomination zk-SNARK pools for ETH and ERC-20 tokens.",
         "OFAC removed its sanctions in March 2025 after losing in court.",
@@ -770,7 +778,7 @@
       id: "decred-cspp",
       column: "optin", name: "Decred StakeShuffle", ticker: "DCR", url: "https://decred.org",
       reviewed: "2026-11-17",
-      tech: "CoinShuffle++ · Peer-to-peer mixing", score: 6,
+      tech: "CoinShuffle++ · Peer-to-peer mixing", factors: [0, 1, 1, 2, 2],
       body: [
         "CoinShuffle++ mixing, run peer-to-peer with no central server since dcrd v2.0.",
         "Heavily used for staking: 45.6M DCR mixed by late 2021, about 3.7x supply.",
@@ -786,7 +794,7 @@
       id: "dash-privatesend",
       column: "optin", name: "Dash CoinJoin", ticker: "DASH", url: "https://www.dash.org",
       reviewed: "2026-11-17",
-      tech: "CoinJoin (formerly PrivateSend) · Masternode mixing", score: 4,
+      tech: "CoinJoin (formerly PrivateSend) · Masternode mixing", factors: [0, 0, 0, 0, 2],
       body: [
         "Basic CoinJoin variant, coordinated by masternodes.",
         "One estimate put CoinJoin at about 0.2% of Dash transactions.",
@@ -800,6 +808,21 @@
       ]
     }
   ];
+
+  const FACTORS = [
+    { key: "def",    short: "DEF",    name: "Default vs opt-in" },
+    { key: "anon",   short: "ANON",   name: "Anonymity set" },
+    { key: "crypto", short: "CRYPTO", name: "Cryptographic strength" },
+    { key: "usage",  short: "USAGE",  name: "Usage scale" },
+    { key: "mature", short: "MATURE", name: "Maturity & standing" }
+  ];
+  DATA.forEach((p) => {
+    if (!p.factors) return;
+    if (p.factors.length !== FACTORS.length || p.factors.some((v) => !(v >= 0 && v <= 2))) {
+      console.warn("[privacy-map] bad factors for", p.id, p.factors);
+    }
+    p.score = p.factors.reduce((t, v) => t + v, 0);
+  });
 
   /* ── derive grade + label from score ── */
   function gradeOf(score) {
@@ -902,6 +925,15 @@
       .catch((e) => console.warn("[privacy-map] metrics unavailable:", e.message));
   }
 
+  function factorsHTML(f) {
+    if (!f) return "";
+    const label = FACTORS.map((x, i) => `${x.name} ${f[i]} of 2`).join(", ");
+    const cells = FACTORS.map((x, i) =>
+      `<span class="fm" title="${esc(x.name)}: ${f[i]}/2"><span class="fm-lbl">${x.short}</span>` +
+      `<span class="pip${f[i] >= 1 ? " on" : ""}"></span><span class="pip${f[i] >= 2 ? " on" : ""}"></span></span>`).join("");
+    return `<div class="fmini" role="img" aria-label="Factor breakdown: ${esc(label)}">${cells}</div>`;
+  }
+
   function sourcesHTML(list) {
     if (!list || !list.length) return "";
     const links = list.map((s, i) =>
@@ -932,6 +964,7 @@
           ${p.score == null ? "" : `<div class="score-pill"><span class="score-num">${p.score}/10</span><span class="score-grade">${g.label}</span></div>`}
         </div>
         ${p.score == null ? "" : `<div class="bar-track"><div class="bar-fill" style="width:${p.score * 10}%"></div></div>`}
+        ${factorsHTML(p.factors)}
         <ul class="card-body">${bullets}</ul>
         ${tags}
         ${metricsHTML(metricFor(p.id))}

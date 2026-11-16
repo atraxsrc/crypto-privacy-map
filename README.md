@@ -31,13 +31,15 @@ Each card carries a privacy grade, the underlying tech, key caveats, status tags
 ## How scores work
 
 Scores are an **opinionated synthesis**, not a precise metric - they rank real-world
-privacy, weighing five factors:
+privacy. Each protocol gets `0-2` on five factors and the score is their sum, so
+every card shows exactly where its points come from:
 
-1. **Default vs opt-in** - always-on privacy beats privacy you choose (biggest factor).
-2. **Anonymity set** - how large a crowd you blend into.
-3. **Cryptographic strength** - ring signatures, zk-SNARKs, MimbleWimble, CoinJoin, etc.
-4. **Real adoption** - what share of transactions are actually private.
-5. **Maturity & standing** - battle-testing, audits, and legal/operational health.
+1. **Default vs opt-in** (`DEF`) - always-on privacy beats privacy you choose; opt-in scores 0.
+2. **Anonymity set** (`ANON`) - how large a crowd you blend into.
+3. **Cryptographic strength** (`CRYPTO`) - ring signatures, zk-SNARKs, MimbleWimble, CoinJoin, etc.
+4. **Usage scale** (`USAGE`) - how much real use the privacy feature gets, measured on
+   its own so default-private coins don't score it for free.
+5. **Maturity & standing** (`MATURE`) - battle-testing, audits, and legal/operational health.
 
 Grade bands: **8-10 High** · **6-7 Medium** · **0-5 Low**. The full breakdown lives in
 the *How the scores work* section on the page.
@@ -47,21 +49,22 @@ the *How the scores work* section on the page.
 The privacy landscape shifts fast (sanctions, arrests, delistings, adoption swings), so
 the project is built to stay fresh:
 
-- **Data-driven** - every protocol lives in one `DATA` array in `index.html`. Update a
-  score or fact in one line; the grade colour and bar derive from the score automatically.
+- **Data-driven** - every protocol lives in one `DATA` array in `index.html`. The score,
+  grade colour and bar all derive from the entry's `factors` array.
 - **Per-entry review dates** - each entry has a `reviewed` date. Anything older than
   `STALE_AFTER_DAYS` (180) is flagged with a *Review due* chip, and the footer tallies how
   many entries need a refresh.
 - **Nightly metrics** - a GitHub Action fetches measured figures (pool balances,
   shielded shares, transaction counts) from public, key-free sources and commits
   them to `metrics.json`. The page layers these onto the cards. Measured data
-  never changes a score: scores stay hand-set. Protocols with no keyless public
+  never changes a score: factor judgments stay hand-set. Protocols with no keyless public
   source simply carry no measured figures.
 
 ## Updating the data
 
 1. Open `index.html` and find the `DATA` array near the bottom.
-2. Edit the relevant entry - `score`, `body`, `tags`, etc.
+2. Edit the relevant entry - `factors`, `body`, `tags`, `sources`, etc. Never add a
+   `score` field to a scored entry: it is computed from `factors`.
 3. Bump that entry's `reviewed` date and the global `LAST_REVIEWED` to today.
 4. Open it in a browser to check, then commit.
 
