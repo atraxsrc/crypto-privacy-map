@@ -132,6 +132,25 @@ class MainTest(unittest.TestCase):
             self.assertTrue(target.exists())
             validate_output(json.loads(target.read_text()))
 
+    def test_writes_history_beside_output(self):
+        fetch_metrics.REGISTRY = [good("a")]
+        fetch_metrics.UNSOURCED = {}
+        with tempfile.TemporaryDirectory() as d:
+            target = Path(d) / "metrics.json"
+            fetch_metrics.main(["--output", str(target)])
+            history = json.loads((Path(d) / "metrics-history.json").read_text())
+            self.assertIn("a", history)
+
+    def test_unchanged_values_leave_files_untouched(self):
+        fetch_metrics.REGISTRY = [good("a")]
+        fetch_metrics.UNSOURCED = {}
+        with tempfile.TemporaryDirectory() as d:
+            target = Path(d) / "metrics.json"
+            fetch_metrics.main(["--output", str(target)])
+            first = target.read_text()
+            fetch_metrics.main(["--output", str(target)])
+            self.assertEqual(target.read_text(), first)
+
     def test_healthy_run_exits_zero(self):
         fetch_metrics.REGISTRY = [good("a"), good("b")]
         fetch_metrics.UNSOURCED = {}

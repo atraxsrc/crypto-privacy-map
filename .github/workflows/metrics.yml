@@ -32,7 +32,9 @@ jobs:
 
       - name: Commit if changed
         run: |
-          if git diff --quiet -- metrics.json; then
+          # The fetch step leaves both files untouched when only timestamps
+          # moved. status (not diff) so the first, untracked history counts.
+          if [ -z "$(git status --porcelain -- metrics.json metrics-history.json)" ]; then
             echo "no metric changes"
             exit 0
           fi
@@ -40,7 +42,7 @@ jobs:
           # hard-coding an address anywhere in the tree.
           git config user.name  "$(git log -1 --format='%an')"
           git config user.email "$(git log -1 --format='%ae')"
-          git add metrics.json
+          git add metrics.json metrics-history.json
           git commit -m "chore(metrics): nightly refresh"
           git push
 

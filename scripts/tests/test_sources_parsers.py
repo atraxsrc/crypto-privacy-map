@@ -14,20 +14,39 @@ def load(name):
 
 
 class TornadoParseTest(unittest.TestCase):
+    def all_pools(self, **override):
+        responses = {key: load("rpc_balance.json") for key in tornado.POOLS}
+        responses.update(override)
+        return responses
+
     def test_converts_hex_wei_to_ether(self):
         # 0x21e19e0c9bab2400000 wei == 10000 ETH
-        values = tornado.parse({"pool-100": load("rpc_balance.json")})
-        self.assertEqual(values[0]["format"], "coin")
-        self.assertEqual(values[0]["unit"], "ETH")
-        self.assertAlmostEqual(values[0]["value"], 10000.0, places=6)
+        values = tornado.parse(self.all_pools())
+        per_pool = {v["key"]: v for v in values}
+        self.assertEqual(per_pool["pool-100"]["format"], "coin")
+        self.assertEqual(per_pool["pool-100"]["unit"], "ETH")
+        self.assertAlmostEqual(per_pool["pool-100"]["value"], 10000.0, places=6)
+
+    def test_total_comes_first_and_sums_every_pool(self):
+        values = tornado.parse(self.all_pools())
+        self.assertEqual(values[0]["key"], "pools-total")
+        self.assertAlmostEqual(values[0]["value"], 10000.0 * len(tornado.POOLS), places=6)
+        self.assertEqual(len(values), len(tornado.POOLS) + 1)
 
     def test_raises_on_rpc_error_response(self):
         with self.assertRaisesRegex(RuntimeError, "rpc error"):
-            tornado.parse({"pool-100": {"error": {"code": -32000, "message": "nope"}}})
+            tornado.parse(self.all_pools(**{"pool-100": {"error": {"code": -32000, "message": "nope"}}}))
 
     def test_raises_when_result_is_missing(self):
         with self.assertRaisesRegex(RuntimeError, "rpc error"):
-            tornado.parse({"pool-100": {"jsonrpc": "2.0", "id": 1}})
+            tornado.parse(self.all_pools(**{"pool-100": {"jsonrpc": "2.0", "id": 1}}))
+
+    def test_raises_when_a_pool_is_missing(self):
+        # A silent partial total would understate the pools.
+        responses = self.all_pools()
+        del responses["pool-10"]
+        with self.assertRaisesRegex(RuntimeError, "pool-10"):
+            tornado.parse(responses)
 
 
 class DefiLlamaParseTest(unittest.TestCase):

@@ -9,8 +9,12 @@ known-good values forward. Second, a red run is a notification and never a
 rollback: the file is written before the exit code is decided, so a widespread
 outage still preserves history.
 
+A third rule keeps the repo quiet: when nothing but timestamps changed, the
+files are left untouched so the workflow has nothing to commit. Value history
+lives beside the output in metrics-history.json and feeds the 30-day trends.
+
 Usage:
-    python3 scripts/fetch_metrics.py [--dry-run] [--output PATH]
+    python3 scripts/fetch_metrics.py [--dry-run] [--output PATH] [--history PATH]
 """
 
 import argparse
@@ -22,7 +26,8 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from pathlib import Path
 
-from metrics_core import build_output, merge_previous, validate_output
+from metrics_core import (attach_trends, build_output, is_material_change,
+                          merge_previous, update_history, validate_output)
 from sources import REGISTRY, UNSOURCED
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -71,6 +76,12 @@ def load_previous(path):
         return None
 
 
+def load_history(path):
+    """Return the stored value history, or {} if missing or unreadable."""
+    data = load_previous(path)
+    return data if isinstance(data, dict) else {}
+
+
 def write_atomic(path, data):
     """Write via a temp file and rename, so readers never see a partial file."""
     path = Path(path)
@@ -101,11 +112,19 @@ def main(argv=None):
                         help="print the document to stdout and write nothing")
     parser.add_argument("--output", default=str(DEFAULT_OUTPUT),
                         help="path to metrics.json")
+    parser.add_argument("--history", default=None,
+                        help="path to metrics-history.json (default: beside --output)")
     args = parser.parse_args(argv)
+    history_path = Path(args.history) if args.history else \
+        Path(args.output).with_name("metrics-history.json")
 
     now = utc_now_iso()
     records = collect(REGISTRY, UNSOURCED, now)
-    records = merge_previous(records, load_previous(args.output))
+    previous = load_previous(args.output)
+    records = merge_previous(records, previous)
+    today = now[:10]
+    history = update_history(load_history(history_path), records, today)
+    attach_trends(records, history, today)
     document = build_output(records, now)
     validate_output(document)
 
@@ -114,7 +133,11 @@ def main(argv=None):
         sys.stdout.write("\n")
         return 0
 
-    write_atomic(args.output, document)
+    if is_material_change(previous, document):
+        write_atomic(args.output, document)
+        write_atomic(history_path, history)
+    else:
+        print("no material change; leaving metrics files untouched", file=sys.stderr)
 
     ratio = error_ratio(records, REGISTRY)
     for pid, rec in sorted(records.items()):

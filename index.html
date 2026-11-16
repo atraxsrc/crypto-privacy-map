@@ -974,7 +974,7 @@
       if (typeof v.trend30d === "number" && v.trend30d !== 0) {
         const dir = v.trend30d > 0 ? "up" : "down";
         const arrow = v.trend30d > 0 ? "▲" : "▼";
-        trend = `<span class="metric-trend ${dir}">${arrow} ${esc(Math.abs(v.trend30d).toFixed(1))}</span>`;
+        trend = `<span class="metric-trend ${dir}" title="change over 30 days">${arrow} ${esc(Math.abs(v.trend30d).toFixed(1))}% 30d</span>`;
       }
       return `<div class="metric"><span class="metric-label">${esc(v.label)}</span>` +
              `<span class="metric-value">${esc(fmtMetric(v))}${trend}</span></div>`;

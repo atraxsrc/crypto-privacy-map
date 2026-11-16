@@ -75,6 +75,12 @@ generated `metrics.json`; the pipeline that writes it lives in `scripts/`.
 
 `metrics.json` is generated. Do not edit it by hand.
 
+`metrics-history.json` (also generated) records each value on the day it
+changes; it drives the 30-day trend arrows, which appear once a series is 30
+days old. A run that changes nothing but timestamps writes neither file, so
+the nightly job only commits when a number actually moved (or every 6 days,
+so the page never shows stale-looking metrics).
+
 ```bash
 python3 scripts/fetch_metrics.py --dry-run     # print, write nothing
 python3 scripts/fetch_metrics.py               # write metrics.json
