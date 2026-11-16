@@ -4,7 +4,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
 import json
 import unittest
 
-from sources import defillama, monero, tornado
+from sources import defillama, monero, tornado, zcash
 
 FIXTURES = pathlib.Path(__file__).resolve().parent / "fixtures"
 
@@ -47,6 +47,31 @@ class TornadoParseTest(unittest.TestCase):
         del responses["pool-10"]
         with self.assertRaisesRegex(RuntimeError, "pool-10"):
             tornado.parse(responses)
+
+
+class ZcashParseTest(unittest.TestCase):
+    def test_sums_every_pool_but_transparent_and_lockbox(self):
+        values = {v["key"]: v for v in zcash.parse(load("zcash_blockchaininfo.json"))}
+        # sprout + sapling + orchard + ironwood
+        self.assertAlmostEqual(values["shielded"]["value"], 4979537.6, places=2)
+        self.assertEqual(values["shielded"]["unit"], "ZEC")
+        self.assertAlmostEqual(values["shielded-share"]["value"], 29.21, places=2)
+
+    def test_an_unknown_future_pool_counts_as_shielded(self):
+        payload = load("zcash_blockchaininfo.json")
+        payload["valuePools"].append({"id": "newpool", "chainValueZat": 100000000000000, "monitored": True})
+        values = {v["key"]: v for v in zcash.parse(payload)}
+        self.assertAlmostEqual(values["shielded"]["value"], 5979537.6, places=2)
+
+    def test_unmonitored_pool_raises_instead_of_undercounting(self):
+        payload = load("zcash_blockchaininfo.json")
+        payload["valuePools"][3]["monitored"] = False
+        with self.assertRaisesRegex(RuntimeError, "not monitored"):
+            zcash.parse(payload)
+
+    def test_missing_pools_raise(self):
+        with self.assertRaises(RuntimeError):
+            zcash.parse({"chainSupply": {"chainValueZat": 1}})
 
 
 class DefiLlamaParseTest(unittest.TestCase):

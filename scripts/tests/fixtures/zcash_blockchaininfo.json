@@ -1,0 +1,13 @@
+{
+  "chain": "main",
+  "blocks": 3580312,
+  "chainSupply": {"chainValue": 17045412.2, "chainValueZat": 1704541220000000, "monitored": true},
+  "valuePools": [
+    {"id": "transparent", "chainValue": 11989129.7, "chainValueZat": 1198912970000000, "monitored": true},
+    {"id": "sprout", "chainValue": 12224.2, "chainValueZat": 1222420000000, "monitored": true},
+    {"id": "sapling", "chainValue": 416979.3, "chainValueZat": 41697930000000, "monitored": true},
+    {"id": "orchard", "chainValue": 320048.5, "chainValueZat": 32004850000000, "monitored": true},
+    {"id": "lockbox", "chainValue": 76745.2, "chainValueZat": 7674520000000, "monitored": true},
+    {"id": "ironwood", "chainValue": 4230285.6, "chainValueZat": 423028560000000, "monitored": true}
+  ]
+}
