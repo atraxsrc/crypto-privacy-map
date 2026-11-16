@@ -678,6 +678,24 @@
       ]
     },
     {
+      id: "pirate-chain",
+      column: "default", name: "Pirate Chain", ticker: "ARRR", url: "https://piratechain.com",
+      reviewed: "2026-11-17",
+      tech: "zk-SNARKs · Shielded-only chain", factors: [2, 1, 2, 1, 0],
+      body: [
+        "Every transaction is a shielded zk-SNARK transaction; transparent sends are not allowed.",
+        "Oct 2026: a bug in the Ironwood upgrade let an attacker mint about 39.8M ARRR, roughly 20% of supply.",
+        "Reports conflict on recovery: a rollback to block 4,176,944 via v6.0.14, or a plan dropped. No official post-mortem found.",
+        "Small user base caps the real anonymity set."
+      ],
+      tags: [{ type: "info", label: "Shielded-Only" }, { type: "warn", label: "Inflation Exploit 2026" }],
+      sources: [
+        { label: "Exploit", url: "https://cryptobriefing.com/pirate-chain-exploit-arrr-rollback/" },
+        { label: "Rollback report", url: "https://www.kucoin.com/blog/pirate-chain-rollback-arrr-exploit-v6-0-14" },
+        { label: "Rollback dropped report", url: "https://www.cryptotimes.io/2026/10/16/pirate-chain-exploit-mints-39-8m-arrr-rollback-plan-dropped/" }
+      ]
+    },
+    {
       id: "beldex",
       column: "default", name: "Beldex", ticker: "BDX", url: "https://www.beldex.io",
       reviewed: "2026-11-17",
@@ -708,6 +726,22 @@
       sources: [
         { label: "Slatepack", url: "https://mwc.mw/news/mwc-devs-release-slatepack" },
         { label: "MimbleWimble linkability, 2019", url: "https://decrypt.co/11740/is-grins-privacy-model-broken" }
+      ]
+    },
+    {
+      id: "grin",
+      column: "default", name: "Grin", ticker: "GRIN", url: "https://grin.mw",
+      reviewed: "2026-11-17",
+      tech: "MimbleWimble · No addresses on-chain", factors: [2, 0, 1, 0, 1],
+      body: [
+        "MimbleWimble: no addresses or amounts on-chain, with a fixed 1 GRIN per second emission.",
+        "A 2019 study linked most transactions by watching the P2P network before aggregation.",
+        "Volunteer and donation funded; tiny market and user base."
+      ],
+      tags: [],
+      sources: [
+        { label: "MimbleWimble linkability, 2019", url: "https://decrypt.co/11740/is-grins-privacy-model-broken" },
+        { label: "Funding and market", url: "https://coinmarketcap.com/currencies/grin/" }
       ]
     },
     {
@@ -789,6 +823,55 @@
       sources: [
         { label: "dcrd v2.0.0", url: "https://github.com/decred/dcrd/releases/tag/release-v2.0.0" },
         { label: "Mixing volume", url: "https://ournetwork.substack.com/p/our-network-issue-50-part-2" }
+      ]
+    },
+    {
+      id: "firo",
+      column: "optin", name: "Firo", ticker: "FIRO", url: "https://firo.org",
+      reviewed: "2026-11-17",
+      tech: "Spark · Hidden sender, receiver and amount", factors: [0, 1, 2, 1, 1],
+      body: [
+        "Spark hides sender, receiver and amount, and is the default in Firo's official wallets.",
+        "Transparent addresses remain and exchanges require them, so privacy is still a choice.",
+        "Aug 2026: a multi-input Spark flaw allowed unlimited minting; fixed by hard fork around Sept 4."
+      ],
+      tags: [{ type: "info", label: "Wallet Default" }, { type: "warn", label: "Inflation Bug 2026" }],
+      sources: [
+        { label: "Spark in Firo wallets", url: "https://firo.org/pillars/private/" },
+        { label: "v0.14.18.0 fix", url: "https://firo.org/2026/08/27/firo-v014180-release.html" },
+        { label: "Spark flaw", url: "https://cryptoslate.com/articles/privacy-coin-flaw-risks-endless-token-creation-leaving-node-operators-with-a-deadline-in-hours-to-fix-it/" }
+      ]
+    },
+    {
+      id: "litecoin-mweb",
+      column: "optin", name: "Litecoin MWEB", ticker: "LTC", url: "https://litecoin.com",
+      reviewed: "2026-11-17",
+      tech: "MimbleWimble extension blocks", factors: [0, 1, 1, 1, 1],
+      body: [
+        "Opt-in MimbleWimble extension block: peg LTC in to hide amounts and addresses.",
+        "Mar 2026: a bug let an attacker fake an 85,034 LTC peg-out; developers froze the funds.",
+        "Apr 2026: an exploit attempt caused a 13-block reorg; fixed in Litecoin Core v0.21.5.4."
+      ],
+      tags: [{ type: "warn", label: "Opt-In Adoption" }, { type: "warn", label: "Inflation Bug 2026" }],
+      sources: [
+        { label: "Official postmortem", url: "https://litecoin.com/news/litecoin-mweb-security-incident-postmortem" },
+        { label: "Postmortem summary", url: "https://news.bitcoin.com/litecoin-postmortem-mweb-bug-let-attacker-fake-85034-ltc-pegout-before-devs-froze-funds/" }
+      ]
+    },
+    {
+      id: "privacy-pools",
+      column: "optin", name: "Privacy Pools", ticker: "ETH", url: "https://privacypools.com",
+      reviewed: "2026-11-17",
+      tech: "zk-SNARKs · Association sets", factors: [0, 0, 2, 0, 1],
+      body: [
+        "Tornado-style zk-SNARK pools built by 0xbow, live on Ethereum since March 2025.",
+        "Withdrawals prove membership in an approved association set that excludes flagged deposits.",
+        "Still small next to Railgun or Tornado Cash."
+      ],
+      tags: [{ type: "info", label: "Association Sets" }],
+      sources: [
+        { label: "Launch", url: "https://www.theblock.co/post/348959/privacy-pools-vitalik-buterin" },
+        { label: "L2BEAT", url: "https://l2beat.com/privacy/projects/privacy-pools" }
       ]
     },
     {

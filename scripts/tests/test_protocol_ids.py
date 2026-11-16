@@ -39,10 +39,12 @@ class IdsFromIndexHtmlTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "duplicate protocol ids"):
             ids_from_index_html(path)
 
-    def test_real_index_html_has_ten_unique_ids(self):
+    def test_real_index_html_has_unique_ids(self):
+        # No fixed count: the roster grows. Coverage of every id is
+        # test_registry_coverage's job; this only guards parsing.
         ids = ids_from_index_html(REPO_ROOT / "index.html")
-        self.assertEqual(len(ids), 10)
-        self.assertEqual(len(set(ids)), 10)
+        self.assertGreaterEqual(len(ids), 10)
+        self.assertEqual(len(ids), len(set(ids)))
         self.assertIn("monero", ids)
         self.assertIn("zcash-shielded", ids)
 

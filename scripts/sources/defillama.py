@@ -1,6 +1,6 @@
 """TVL from DefiLlama, which serves its protocol endpoints without a key.
 
-One parser, two sources: Railgun and Aztec differ only by slug.
+One parser, several sources: each protocol differs only by slug.
 """
 
 from metrics_core import make_value
@@ -36,3 +36,4 @@ def _make(protocol_id, slug):
 
 RAILGUN = _make("railgun", "railgun")
 AZTEC = _make("aztec", "aztec")
+PRIVACY_POOLS = _make("privacy-pools", "privacy-pools")
