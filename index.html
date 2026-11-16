@@ -605,26 +605,35 @@
     {
       id: "beldex",
       column: "default", name: "Beldex", ticker: "BDX", url: "https://www.beldex.io",
-      reviewed: "2025-09-01",
-      tech: "Monero fork · RingCT", score: 6,
+      reviewed: "2026-11-17",
+      tech: "Monero fork · Ring signatures · RingCT", score: 6,
       body: [
-        "Monero fork with similar tech stack.",
-        "Smaller network = weaker anonymity guarantees.",
-        "Less battle-tested than Monero."
+        "Monero-derived: ring signatures, stealth addresses and RingCT on every transaction.",
+        "Ring size 11 (Monero uses 16) on a far smaller network.",
+        "Masternodes also carry BChat messaging and the BelNet dVPN."
       ],
-      tags: []
+      tags: [],
+      sources: [
+        { label: "Ring size and design", url: "https://coinbureau.com/review/beldex-review" },
+        { label: "Ring size 11", url: "https://benzinga.com/z/28835647" }
+      ]
     },
     {
       id: "mwc",
       column: "default", name: "MWC", ticker: "MWC", url: "https://www.mwc.mw",
-      reviewed: "2025-04-10",
+      reviewed: "2026-11-17",
       tech: "MimbleWimble · No addresses on-chain", score: 6,
       body: [
-        "MimbleWimble: no addresses stored on-chain.",
-        "Interactive transactions are a UX barrier.",
+        "MimbleWimble: no addresses or amounts stored on-chain.",
+        "Still interactive: sender and receiver swap Slatepack messages to transact.",
+        "A 2019 study linked most Grin transactions by watching the P2P network before aggregation; the same model applies here.",
         "Very small network limits effective privacy."
       ],
-      tags: []
+      tags: [],
+      sources: [
+        { label: "Slatepack", url: "https://mwc.mw/news/mwc-devs-release-slatepack" },
+        { label: "MimbleWimble linkability, 2019", url: "https://decrypt.co/11740/is-grins-privacy-model-broken" }
+      ]
     },
     {
       id: "zcash-shielded",
