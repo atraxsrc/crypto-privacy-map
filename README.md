@@ -96,7 +96,7 @@ fails until you do, which is deliberate.
 
 ## Tech
 
-Plain HTML/CSS/JS, no framework. JetBrains Mono + a Tokyo Night palette.
+Plain HTML/CSS/JS, no framework. JetBrains Mono + a "neon city" palette (cyan / amber / pink grades, chosen to stay distinct under colour blindness).
 
 ## Disclaimer
 
