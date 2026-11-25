@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-24T13:55:24Z",
+  "generated": "2026-11-25T13:09:49Z",
   "metrics": {
     "beldex": {
       "reason": "no keyless public explorer API found",
@@ -26,7 +26,7 @@
       "status": "unsourced"
     },
     "monero": {
-      "fetched": "2026-11-24T13:55:24Z",
+      "fetched": "2026-11-25T13:09:49Z",
       "source": {
         "name": "Coin Metrics",
         "url": "https://charts.coinmetrics.io/network-data/"
@@ -37,7 +37,7 @@
           "format": "int",
           "key": "tx_24h",
           "label": "Transactions per day",
-          "value": 34099
+          "value": 33086
         }
       ]
     },
@@ -50,7 +50,7 @@
       "status": "unsourced"
     },
     "privacy-pools": {
-      "fetched": "2026-11-24T13:55:24Z",
+      "fetched": "2026-11-25T13:09:49Z",
       "source": {
         "name": "DefiLlama",
         "url": "https://defillama.com/protocol/privacy-pools"
@@ -61,12 +61,12 @@
           "format": "usd",
           "key": "tvl",
           "label": "Value in pool",
-          "value": 9019631.0
+          "value": 9006754.0
         }
       ]
     },
     "railgun": {
-      "fetched": "2026-11-24T13:55:24Z",
+      "fetched": "2026-11-25T13:09:49Z",
       "source": {
         "name": "DefiLlama",
         "url": "https://defillama.com/protocol/railgun"
@@ -77,7 +77,7 @@
           "format": "usd",
           "key": "tvl",
           "label": "Value in pool",
-          "value": 100332971.0
+          "value": 96783918.0
         }
       ]
     },
@@ -86,7 +86,7 @@
       "status": "unsourced"
     },
     "tornado-cash": {
-      "fetched": "2026-11-24T13:55:24Z",
+      "fetched": "2026-11-25T13:09:49Z",
       "source": {
         "name": "Ethereum JSON-RPC",
         "url": "https://etherscan.io/accounts/label/tornado-cash"
@@ -98,35 +98,35 @@
           "key": "pools-total",
           "label": "All ETH pools",
           "unit": "ETH",
-          "value": 306047.1
+          "value": 306161.7
         },
         {
           "format": "coin",
           "key": "pool-0.1",
           "label": "0.1 ETH pool",
           "unit": "ETH",
-          "value": 662.1
+          "value": 658.7
         },
         {
           "format": "coin",
           "key": "pool-1",
           "label": "1 ETH pool",
           "unit": "ETH",
-          "value": 4245.0
+          "value": 4233.0
         },
         {
           "format": "coin",
           "key": "pool-10",
           "label": "10 ETH pool",
           "unit": "ETH",
-          "value": 23540.0
+          "value": 23170.0
         },
         {
           "format": "coin",
           "key": "pool-100",
           "label": "100 ETH pool",
           "unit": "ETH",
-          "value": 277600.0
+          "value": 278100.0
         }
       ]
     },
@@ -135,7 +135,7 @@
       "status": "unsourced"
     },
     "zcash-shielded": {
-      "fetched": "2026-11-24T13:55:24Z",
+      "fetched": "2026-11-25T13:09:49Z",
       "source": {
         "name": "Zcash node (zcashexplorer.app)",
         "url": "https://mainnet.zcashexplorer.app"
@@ -147,13 +147,13 @@
           "key": "shielded",
           "label": "Shielded ZEC",
           "unit": "ZEC",
-          "value": 4938843.04
+          "value": 4934936.51
         },
         {
           "format": "pct",
           "key": "shielded-share",
           "label": "Share of supply shielded",
-          "value": 28.95
+          "value": 28.93
         }
       ]
     }
